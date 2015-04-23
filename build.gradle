@@ -1,0 +1,60 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.novoda:bintray-release:0.2.10'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+ext {
+    VERSION = version()
+}
+
+task bumpMajor << {
+    ant.propertyfile(file: 'version.properties') {
+        entry(key: 'major', type: 'int', operation: '+', value: 1)
+        entry(key: 'minor', type: 'int', operation: '=', value: 0)
+        entry(key: 'patch', type: 'int', operation: '=', value: 0)
+    }
+}
+
+task bumpMinor << {
+    ant.propertyfile(file: 'version.properties') {
+        entry(key: 'minor', type: 'int', operation: '+', value: 1)
+        entry(key: 'patch', type: 'int', operation: '=', value: 0)
+    }
+}
+
+task bumpPatch << {
+    ant.propertyfile(file: 'version.properties') {
+        entry(key: 'patch', type: 'int', operation: '+', value: 1)
+    }
+}
+
+task genReadMe << {
+    def template = file('README.md.template').text
+    def result = template.replaceAll("%%version%%", version())
+    file("README.md").withWriter{ it << result }
+}
+
+task version << {
+    println version()
+}
+
+def String version() {
+    def versionPropsFile = file('version.properties')
+    def Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(versionPropsFile))
+
+    return versionProps['major'] + "." + versionProps['minor'] + "." + versionProps['patch']
+}
