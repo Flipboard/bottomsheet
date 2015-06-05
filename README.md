@@ -1,5 +1,5 @@
 #BottomSheet
-BottomSheet is an Android component which presents a dismiss-able view from the bottom of the screen. BottomSheet can be a useful replacement for dialogs and menus but can hold any view so the use cases are endless. This repository includes the BottomSheet component itself but also includes a set of common view components presented in a bottom sheet. These are located in the commons module.
+BottomSheet is an Android component which presents a dismissible view from the bottom of the screen. BottomSheet can be a useful replacement for dialogs and menus but can hold any view so the use cases are endless. This repository includes the BottomSheet component itself but also includes a set of common view components presented in a bottom sheet. These are located in the commons module.
 
 BottomSheet has been used in production at Flipboard for a while now so it is thoroughly tested. Here is a GIF of it in action inside of Flipboard!
 
