@@ -49,6 +49,13 @@ public class BottomSheetLayout extends FrameLayout {
 
     }
 
+    private class IdentityViewTransformer extends BaseViewTransformer {
+        @Override
+        public void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view) {
+            // no-op
+        }
+    }
+
     public enum State {
         HIDDEN,
         PEEKED,
@@ -59,7 +66,6 @@ public class BottomSheetLayout extends FrameLayout {
         void onSheetStateChanged(State state);
     }
 
-    private static final float MAX_DIM_ALPHA = 0.7f;
     private static final long ANIMATION_DURATION = 300;
 
     private Rect contentClipRect = new Rect();
@@ -71,7 +77,7 @@ public class BottomSheetLayout extends FrameLayout {
     private VelocityTracker velocityTracker;
     private float minFlingVelocity;
     private float touchSlop;
-    private ViewTransformer defaultViewTransformer;
+    private ViewTransformer defaultViewTransformer = new IdentityViewTransformer();
     private ViewTransformer viewTransformer;
     private OnSheetDismissedListener onSheetDismissedListener;
     private boolean shouldDimContentView = true;
@@ -178,9 +184,7 @@ public class BottomSheetLayout extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
         getSheetView().setTranslationY(getHeight() - sheetTranslation);
         transformView(sheetTranslation);
-
-        float progress = Math.max(sheetTranslation - getPeekSheetTranslation(), 0) / (getHeight() - getPeekSheetTranslation());
-        dimView.setAlpha(shouldDimContentView ? progress * MAX_DIM_ALPHA : 0);
+        dimView.setAlpha(shouldDimContentView ? getDimAlpha(sheetTranslation) : 0);
     }
 
     private void transformView(float sheetTranslation) {
@@ -189,6 +193,15 @@ public class BottomSheetLayout extends FrameLayout {
         } else if (defaultViewTransformer != null) {
             defaultViewTransformer.transformView(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
         }
+    }
+
+    private float getDimAlpha(float sheetTranslation) {
+        if (viewTransformer != null) {
+            return viewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        } else if (defaultViewTransformer != null) {
+            return defaultViewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        }
+        return 0;
     }
 
     private float getSheetTranslation() {
