@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.flipboard.bottomsheet.BottomSheet;
+import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;
 import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 
@@ -16,13 +16,13 @@ import java.util.Comparator;
 
 public class MainActivity extends Activity {
 
-    BottomSheet bottomSheet;
+    BottomSheetLayout bottomSheetLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bottomSheet = (BottomSheet) findViewById(R.id.bottomsheet);
+        bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
         final TextView shareText = (TextView) findViewById(R.id.share_text);
         final Button shareButton = (Button) findViewById(R.id.share_button);
 
@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
                 IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(MainActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
                     @Override
                     public void onIntentPicked(Intent intent) {
-                        bottomSheet.dismissSheet();
+                        bottomSheetLayout.dismissSheet();
                         startActivity(intent);
                     }
                 });
@@ -53,18 +53,18 @@ public class MainActivity extends Activity {
                         return rhs.label.compareTo(lhs.label);
                     }
                 });
-                bottomSheet.showWithSheetView(intentPickerSheet);
+                bottomSheetLayout.showWithSheetView(intentPickerSheet);
             }
         });
     }
 
     @Override
     public void onBackPressed() {
-        if (bottomSheet.isSheetShowing()) {
-            if (bottomSheet.getState() == BottomSheet.State.EXPANDED) {
-                bottomSheet.peekSheet();
+        if (bottomSheetLayout.isSheetShowing()) {
+            if (bottomSheetLayout.getState() == BottomSheetLayout.State.EXPANDED) {
+                bottomSheetLayout.peekSheet();
             } else {
-                bottomSheet.dismissSheet();
+                bottomSheetLayout.dismissSheet();
             }
         } else {
             super.onBackPressed();

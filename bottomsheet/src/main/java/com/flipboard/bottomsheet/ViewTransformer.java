@@ -14,6 +14,6 @@ public interface ViewTransformer {
      * @param parent The BottomSheet presenting the sheet view.
      * @param view The content view to transform.
      */
-    void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheet parent, View view);
+    void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view);
 
 }

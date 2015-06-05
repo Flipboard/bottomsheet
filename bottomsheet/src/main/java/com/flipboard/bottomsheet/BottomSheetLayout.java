@@ -21,16 +21,16 @@ import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
-public class BottomSheet extends FrameLayout {
+public class BottomSheetLayout extends FrameLayout {
 
-    private static final Property<BottomSheet, Float> SHEET_TRANSLATION = new Property<BottomSheet, Float>(Float.class, "sheetTranslation") {
+    private static final Property<BottomSheetLayout, Float> SHEET_TRANSLATION = new Property<BottomSheetLayout, Float>(Float.class, "sheetTranslation") {
         @Override
-        public Float get(BottomSheet object) {
+        public Float get(BottomSheetLayout object) {
             return object.getSheetTranslation();
         }
 
         @Override
-        public void set(BottomSheet object, Float value) {
+        public void set(BottomSheetLayout object, Float value) {
             object.setSheetTranslation(value);
         }
     };
@@ -92,22 +92,22 @@ public class BottomSheet extends FrameLayout {
     /** Snapshot of the sheet's state at the time of the last down event */
     private State downState;
 
-    public BottomSheet(Context context) {
+    public BottomSheetLayout(Context context) {
         super(context);
         init();
     }
 
-    public BottomSheet(Context context, AttributeSet attrs) {
+    public BottomSheetLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BottomSheetLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public BottomSheet(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BottomSheetLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -562,7 +562,7 @@ public class BottomSheet extends FrameLayout {
                     removeView(getSheetView());
 
                     if (onSheetDismissedListener != null) {
-                        onSheetDismissedListener.onDismissed(BottomSheet.this);
+                        onSheetDismissedListener.onDismissed(BottomSheetLayout.this);
                     }
 
                     // Remove sheet specific properties
