@@ -15,7 +15,7 @@ dependencies {
 ```
 
 ##Getting Started
-Get started by wrapping your layout in a BottomSheet. So if you currently have this:
+Get started by wrapping your layout in a BottomSheetLayout. So if you currently have this:
 ```xml
 <LinearLayout
 	android:id="@+id/root"
@@ -38,7 +38,7 @@ Get started by wrapping your layout in a BottomSheet. So if you currently have t
 
 You would have to update it to look like this:
 ```xml
-<com.flipboard.bottomsheet.BottomSheet
+<com.flipboard.bottomsheet.BottomSheetLayout
 	android:id="@+id/bottomsheet"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -61,34 +61,34 @@ You would have to update it to look like this:
 
 	</LinearLayout>
 
-</com.flipboard.bottomsheet.BottomSheet>
+</com.flipboard.bottomsheet.BottomSheetLayout>
 ```
 
-Back in your activity or fragment you would get a reference to the BottomSheet like any other view.
+Back in your activity or fragment you would get a reference to the BottomSheetLayout like any other view.
 ```java
-BottomSheet bottomSheet = (BottomSheet) findViewById(R.id.bottomsheet);
+BottomSheetLayout bottomSheet = (BottomSheetLayout) findViewById(R.id.bottomsheet);
 ```
 
-Now all you need to do is show a view in the bottomSheet:
+Now all you need to do is show a view in the bottomSheetLayout:
 ```java
-bottomSheet.showWithSheetView(LayoutInflater.from(context).inflate(R.layout.my_sheet_layout, bottomSheet, false));
+bottomSheetLayout.showWithSheetView(LayoutInflater.from(context).inflate(R.layout.my_sheet_layout, bottomSheetLayout, false));
 ```
 
 You could also use one of the sheet views from the commons module.
 ```java
-bottomSheet.showWithSheetView(new IntentPickerSheetView(this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
+bottomSheetLayout.showWithSheetView(new IntentPickerSheetView(this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
 	@Override
 	public void onIntentPicked(Intent intent) {
-		bottomSheet.dismissSheet();
+		bottomSheetLayout.dismissSheet();
 		startActivity(intent);
 	}
 });
 ```
 
-That's it for the simplest of use cases. Check out the API documentation below to find out how to customize BottomSheet to fit your use cases.
+That's it for the simplest of use cases. Check out the API documentation below to find out how to customize BottomSheetLayout to fit your use cases.
 
 ##API
-###BottomSheet
+###BottomSheetLayout
  ```java
 /**
  * Set the presented sheet to be in an expanded state.
@@ -210,9 +210,9 @@ public void setOnSheetStateChangeListener(OnSheetStateChangeListener onSheetStat
 /**
  * Called when the presented sheet has been dismissed.
  *
- * @param bottomSheet The bottom sheet which contained the presented sheet.
+ * @param bottomSheetLayout The bottom sheet which contained the presented sheet.
  */
-void onDismissed(BottomSheet bottomSheet);
+void onDismissed(BottomSheetLayout bottomSheetLayout);
 ```
 
 ###ViewTransformer
@@ -224,17 +224,17 @@ void onDismissed(BottomSheet bottomSheet);
  * @param translation The current translation of the presented sheet view.
  * @param maxTranslation The max translation of the presented sheet view.
  * @param peekedTranslation The peeked state translation of the presented sheet view.
- * @param parent The BottomSheet presenting the sheet view.
+ * @param parent The BottomSheetLayout presenting the sheet view.
  * @param view The content view to transform.
  */
-void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheet parent, View view);
+void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view);
 ```
 
 ##Common Components
 These are located in the optional `bottomsheet-commons` dependency and implement common use cases for bottom sheet.
 
 ###IntentPickerSheetView
-This component presents an intent chooser in the form of a BottomSheet view. Give it an intent such as a share intent and let the user choose what activity they want to share the intent with in a BottomSheet. Here is a GIF of it in action!
+This component presents an intent chooser in the form of a BottomSheetLayout view. Give it an intent such as a share intent and let the user choose what activity they want to share the intent with in a BottomSheetLayout. Here is a GIF of it in action!
 
 ![IntentPickerSheetView gif](http://i.imgur.com/ld56kbi.gif)
 
@@ -243,7 +243,7 @@ Here is a sample use case of this component taken from the sample application.
 IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(MainActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
 	@Override
 	public void onIntentPicked(Intent intent) {
-		bottomSheet.dismissSheet();
+		bottomSheetLayout.dismissSheet();
 		startActivity(intent);
 	}
 });
@@ -261,8 +261,8 @@ intentPickerSheet.setSortMethod(new Comparator<IntentPickerSheetView.ActvityInfo
 		return rhs.label.compareTo(lhs.label);
 	}
 });
-bottomSheet.showWithSheetView(intentPickerSheet);
+bottomSheetLayout.showWithSheetView(intentPickerSheet);
 ```
 
 ##Contributing
-We welcome pull requests for bug fixes, new features, and improvements to BottomSheet. Contributors to the main BottomSheet repository must accept Flipboard's Apache-style [Individual Contributor License Agreement (CLA)](https://docs.google.com/forms/d/1gh9y6_i8xFn6pA15PqFeye19VqasuI9-bGp_e0owy74/viewform) before any changes can be merged.
+We welcome pull requests for bug fixes, new features, and improvements to BottomSheetLayout. Contributors to the main BottomSheetLayout repository must accept Flipboard's Apache-style [Individual Contributor License Agreement (CLA)](https://docs.google.com/forms/d/1gh9y6_i8xFn6pA15PqFeye19VqasuI9-bGp_e0owy74/viewform) before any changes can be merged.
