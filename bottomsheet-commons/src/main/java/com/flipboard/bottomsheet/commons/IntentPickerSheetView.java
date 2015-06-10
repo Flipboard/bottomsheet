@@ -75,7 +75,7 @@ public class IntentPickerSheetView extends FrameLayout {
         super(context);
         this.intent = intent;
 
-        inflate(context, R.layout.intent_picker_sheet_view, this);
+        inflate(context, R.layout.grid_sheet_view, this);
         appGrid = (GridView) findViewById(R.id.grid);
         TextView titleView = (TextView) findViewById(R.id.title);
 
@@ -152,7 +152,7 @@ public class IntentPickerSheetView extends FrameLayout {
             ViewHolder holder;
 
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.intent_picker_grid_item, parent, false);
+                convertView = inflater.inflate(R.layout.sheet_grid_item, parent, false);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
