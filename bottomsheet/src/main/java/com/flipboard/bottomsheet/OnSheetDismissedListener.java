@@ -5,8 +5,8 @@ public interface OnSheetDismissedListener {
     /**
      * Called when the presented sheet has been dismissed.
      *
-     * @param bottomSheet The bottom sheet which contained the presented sheet.
+     * @param bottomSheetLayout The bottom sheet which contained the presented sheet.
      */
-    void onDismissed(BottomSheet bottomSheet);
+    void onDismissed(BottomSheetLayout bottomSheetLayout);
 
 }

@@ -21,16 +21,16 @@ import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
-public class BottomSheet extends FrameLayout {
+public class BottomSheetLayout extends FrameLayout {
 
-    private static final Property<BottomSheet, Float> SHEET_TRANSLATION = new Property<BottomSheet, Float>(Float.class, "sheetTranslation") {
+    private static final Property<BottomSheetLayout, Float> SHEET_TRANSLATION = new Property<BottomSheetLayout, Float>(Float.class, "sheetTranslation") {
         @Override
-        public Float get(BottomSheet object) {
+        public Float get(BottomSheetLayout object) {
             return object.getSheetTranslation();
         }
 
         @Override
-        public void set(BottomSheet object, Float value) {
+        public void set(BottomSheetLayout object, Float value) {
             object.setSheetTranslation(value);
         }
     };
@@ -49,6 +49,13 @@ public class BottomSheet extends FrameLayout {
 
     }
 
+    private class IdentityViewTransformer extends BaseViewTransformer {
+        @Override
+        public void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view) {
+            // no-op
+        }
+    }
+
     public enum State {
         HIDDEN,
         PEEKED,
@@ -59,7 +66,6 @@ public class BottomSheet extends FrameLayout {
         void onSheetStateChanged(State state);
     }
 
-    private static final float MAX_DIM_ALPHA = 0.7f;
     private static final long ANIMATION_DURATION = 300;
 
     private Rect contentClipRect = new Rect();
@@ -71,7 +77,7 @@ public class BottomSheet extends FrameLayout {
     private VelocityTracker velocityTracker;
     private float minFlingVelocity;
     private float touchSlop;
-    private ViewTransformer defaultViewTransformer;
+    private ViewTransformer defaultViewTransformer = new IdentityViewTransformer();
     private ViewTransformer viewTransformer;
     private OnSheetDismissedListener onSheetDismissedListener;
     private boolean shouldDimContentView = true;
@@ -92,22 +98,22 @@ public class BottomSheet extends FrameLayout {
     /** Snapshot of the sheet's state at the time of the last down event */
     private State downState;
 
-    public BottomSheet(Context context) {
+    public BottomSheetLayout(Context context) {
         super(context);
         init();
     }
 
-    public BottomSheet(Context context, AttributeSet attrs) {
+    public BottomSheetLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BottomSheetLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public BottomSheet(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BottomSheetLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -178,9 +184,7 @@ public class BottomSheet extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
         getSheetView().setTranslationY(getHeight() - sheetTranslation);
         transformView(sheetTranslation);
-
-        float progress = Math.max(sheetTranslation - getPeekSheetTranslation(), 0) / (getHeight() - getPeekSheetTranslation());
-        dimView.setAlpha(shouldDimContentView ? progress * MAX_DIM_ALPHA : 0);
+        dimView.setAlpha(shouldDimContentView ? getDimAlpha(sheetTranslation) : 0);
     }
 
     private void transformView(float sheetTranslation) {
@@ -189,6 +193,15 @@ public class BottomSheet extends FrameLayout {
         } else if (defaultViewTransformer != null) {
             defaultViewTransformer.transformView(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
         }
+    }
+
+    private float getDimAlpha(float sheetTranslation) {
+        if (viewTransformer != null) {
+            return viewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        } else if (defaultViewTransformer != null) {
+            return defaultViewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        }
+        return 0;
     }
 
     private float getSheetTranslation() {
@@ -562,7 +575,7 @@ public class BottomSheet extends FrameLayout {
                     removeView(getSheetView());
 
                     if (onSheetDismissedListener != null) {
-                        onSheetDismissedListener.onDismissed(BottomSheet.this);
+                        onSheetDismissedListener.onDismissed(BottomSheetLayout.this);
                     }
 
                     // Remove sheet specific properties

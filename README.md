@@ -1,5 +1,5 @@
 #BottomSheet
-BottomSheet is an Android component which presents a dismissable view from the bottom of the screen. BottomSheet can be a usefull replacement for dialogs and menus but can hold any view so the use cases are endless. This repository includes the BottomSheet component itself but also includes a set of common view componenets presented in a bottom sheet. These are located in the commons module.
+BottomSheet is an Android component which presents a dismissible view from the bottom of the screen. BottomSheet can be a useful replacement for dialogs and menus but can hold any view so the use cases are endless. This repository includes the BottomSheet component itself but also includes a set of common view components presented in a bottom sheet. These are located in the commons module.
 
 BottomSheet has been used in production at Flipboard for a while now so it is thoroughly tested. Here is a GIF of it in action inside of Flipboard!
 
@@ -9,13 +9,13 @@ BottomSheet has been used in production at Flipboard for a while now so it is th
 If all you want is the BottomSheet component and don't need things from commons you can skip that dependency.
 ```groovy
 dependencies {
-    compile 'com.flipboard:bottomsheet-core:1.0.0'
-    compile 'com.flipboard:bottomsheet-commons:1.0.0' // optional
+    compile 'com.flipboard:bottomsheet-core:1.1.0'
+    compile 'com.flipboard:bottomsheet-commons:1.1.0' // optional
 }
 ```
 
 ##Getting Started
-Get started by wrapping your layout in a BottomSheet. So if you currently have this:
+Get started by wrapping your layout in a `BottomSheetLayout`. So if you currently have this:
 ```xml
 <LinearLayout
 	android:id="@+id/root"
@@ -38,7 +38,7 @@ Get started by wrapping your layout in a BottomSheet. So if you currently have t
 
 You would have to update it to look like this:
 ```xml
-<com.flipboard.bottomsheet.BottomSheet
+<com.flipboard.bottomsheet.BottomSheetLayout
 	android:id="@+id/bottomsheet"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -61,12 +61,12 @@ You would have to update it to look like this:
 
 	</LinearLayout>
 
-</com.flipboard.bottomsheet.BottomSheet>
+</com.flipboard.bottomsheet.BottomSheetLayout>
 ```
 
-Back in your activity or fragment you would get a reference to the BottomSheet like any other view.
+Back in your activity or fragment you would get a reference to the BottomSheetLayout like any other view.
 ```java
-BottomSheet bottomSheet = (BottomSheet) findViewById(R.id.bottomsheet);
+BottomSheetLayout bottomSheet = (BottomSheetLayout) findViewById(R.id.bottomsheet);
 ```
 
 Now all you need to do is show a view in the bottomSheet:
@@ -88,7 +88,7 @@ bottomSheet.showWithSheetView(new IntentPickerSheetView(this, shareIntent, "Shar
 That's it for the simplest of use cases. Check out the API documentation below to find out how to customize BottomSheet to fit your use cases.
 
 ##API
-###BottomSheet
+###BottomSheetLayout
  ```java
 /**
  * Set the presented sheet to be in an expanded state.
@@ -174,7 +174,7 @@ public void setDefaultViewTransformer(ViewTransformer defaultViewTransformer);
 
 /**
  * Enable or disable dimming of the content view while a sheet is presented. If enabled a
- * transparent black dim is overlayed on top of the content view indicating that the sheet is the
+ * transparent black dim is overlaid on top of the content view indicating that the sheet is the
  * foreground view. This dim is animated into place is coordination with the sheet view.
  * Defaults to true.
  *
@@ -227,7 +227,21 @@ void onDismissed(BottomSheet bottomSheet);
  * @param parent The BottomSheet presenting the sheet view.
  * @param view The content view to transform.
  */
-void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheet parent, View view);
+void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view);
+
+/**
+ * Called on when the translation of the sheet view changes allowing you to customize the amount of dimming which
+ * is applied to the content view.
+ *
+ * @param translation The current translation of the presented sheet view.
+ * @param maxTranslation The max translation of the presented sheet view.
+ * @param peekedTranslation The peeked state translation of the presented sheet view.
+ * @param parent The BottomSheet presenting the sheet view.
+ * @param view The content view to transform.
+ *
+ * @return The alpha to apply to the dim overlay.
+ */
+float getDimAlpha(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view);
 ```
 
 ##Common Components
