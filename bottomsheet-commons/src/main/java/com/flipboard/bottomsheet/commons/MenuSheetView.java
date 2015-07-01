@@ -3,6 +3,7 @@ package com.flipboard.bottomsheet.commons;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.MenuRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -55,22 +56,32 @@ public class MenuSheetView extends FrameLayout {
     private Adapter adapter;
     private AbsListView absListView;
     private final TextView titleView;
-    private OnMenuItemClickListener listener;
 
-    protected MenuSheetView(Builder builder) {
-        super(builder.context);
+    /**
+     * @param context Context to construct the view with
+     * @param menuType LIST or GRID
+     * @param titleRes String resource ID for the title
+     * @param listener Listener for menu item clicks in the sheet
+     */
+    public MenuSheetView(final Context context, final MenuType menuType, @StringRes final int titleRes, final OnMenuItemClickListener listener) {
+        this(context, menuType, context.getString(titleRes), listener);
+    }
+
+    /**
+     * @param context Context to construct the view with
+     * @param menuType LIST or GRID
+     * @param title Title for the sheet. Can be null
+     * @param listener Listener for menu item clicks in the sheet
+     */
+    public MenuSheetView(final Context context, final MenuType menuType, @Nullable final CharSequence title, final OnMenuItemClickListener listener) {
+        super(context);
 
         // Set up the menu
-        menu = new PopupMenu(builder.context, null).getMenu();  // Dirty hack to get a menu instance since MenuBuilder isn't public ಠ_ಠ
-        this.menuType = builder.menuType;
-        this.listener = builder.listener;
-        if (builder.menuRes != -1) {
-            MenuInflater inflater = new MenuInflater(builder.context);
-            inflater.inflate(builder.menuRes, menu);
-        }
+        this.menu = new PopupMenu(context, null).getMenu();  // Dirty hack to get a menu instance since MenuBuilder isn't public ಠ_ಠ
+        this.menuType = menuType;
 
         // Inflate the appropriate view and set up the absListView
-        inflate(builder.context, menuType == GRID ? R.layout.grid_sheet_view : R.layout.list_sheet_view, this);
+        inflate(context, menuType == GRID ? R.layout.grid_sheet_view : R.layout.list_sheet_view, this);
         absListView = (AbsListView) findViewById(menuType == GRID ? R.id.grid : R.id.list);
         if (listener != null) {
             absListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,7 +94,19 @@ public class MenuSheetView extends FrameLayout {
 
         // Set up the title
         titleView = (TextView) findViewById(R.id.title);
-        setTitle(builder.title);
+        setTitle(title);
+    }
+
+    /**
+     * Inflates a menu resource into the menu backing this sheet.
+     *
+     * @param menuRes Menu resource ID
+     */
+    public void inflateMenu(@MenuRes int menuRes) {
+        if (menuRes != -1) {
+            MenuInflater inflater = new MenuInflater(getContext());
+            inflater.inflate(menuRes, menu);
+        }
 
         prepareMenuItems();
     }
@@ -314,82 +337,6 @@ public class MenuSheetView extends FrameLayout {
                 icon.setImageDrawable(item.getMenuItem().getIcon());
                 label.setText(item.getMenuItem().getTitle());
             }
-        }
-    }
-
-    /**
-     * Builder for creating a {@link MenuSheetView}
-     */
-    public static class Builder {
-        private Context context;
-        private MenuType menuType = LIST;
-        private @MenuRes int menuRes = -1;
-        private CharSequence title;
-        private OnMenuItemClickListener listener;
-
-        public Builder(Context context) {
-            this.context = context;
-        }
-
-        /**
-         * Sets the menu resource used to back this sheet
-         *
-         * @param resId Menu resource ID
-         * @return Builder instance for chaining
-         */
-        public Builder setMenuRes(@MenuRes int resId) {
-            this.menuRes = resId;
-            return this;
-        }
-
-        /**
-         * Sets what type of menu you want to display, either LIST or GRID. Default is LIST.
-         *
-         * @param type {@link MenuType} to use for this list
-         * @return Builder instance for chaining
-         */
-        public Builder setMenuType(MenuType type) {
-            this.menuType = type;
-            return this;
-        }
-
-        /**
-         * Sets the title text of the sheet
-         *
-         * @param resId String resource ID for the text
-         * @return Builder instance for chaining
-         */
-        public Builder setTitle(@StringRes int resId) {
-            return setTitle(context.getResources().getText(resId));
-        }
-
-        /**
-         Sets the title text of the sheet
-         *
-         * @param title Title text to use
-         * @return Builder instance for chaining
-         */
-        public Builder setTitle(CharSequence title) {
-            this.title = title;
-            return this;
-        }
-
-        /**
-         * Sets a listener for when a menu item is clicked
-         *
-         * @param listener an {@link OnMenuItemClickListener} instance
-         * @return Builder instance for chaining
-         */
-        public Builder setOnMenuItemClickListener(OnMenuItemClickListener listener) {
-            this.listener = listener;
-            return this;
-        }
-
-        /**
-         * Constructs the sheet and returns it
-         */
-        public MenuSheetView create() {
-            return new MenuSheetView(this);
         }
     }
 

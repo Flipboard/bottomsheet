@@ -34,11 +34,8 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showMenuSheet(MenuSheetView.MenuType menuType) {
-        MenuSheetView menuSheetView = new MenuSheetView.Builder(MenuActivity.this)
-                .setTitle("Create...")
-                .setMenuType(menuType)
-                .setMenuRes(R.menu.create)
-                .setOnMenuItemClickListener(new MenuSheetView.OnMenuItemClickListener() {
+        MenuSheetView menuSheetView =
+                new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
@@ -47,8 +44,8 @@ public class MenuActivity extends BaseActivity {
                         }
                         return true;
                     }
-                })
-                .create();
+                });
+        menuSheetView.inflateMenu(R.menu.create);
         bottomSheetLayout.showWithSheetView(menuSheetView);
     }
 }
