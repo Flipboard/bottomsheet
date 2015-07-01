@@ -1,28 +1,17 @@
-<com.flipboard.bottomsheet.BottomSheetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bottomsheet"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
 
-    <LinearLayout
-        android:id="@+id/root"
+    <Button
+        android:id="@+id/picker_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="end">
+        android:layout_height="wrap_content"
+        android:text="@string/intent_picker"
+        />
 
-        <EditText
-            android:id="@+id/share_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"/>
 
-        <Button
-            android:id="@+id/share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/share"/>
-
-    </LinearLayout>
-
-</com.flipboard.bottomsheet.BottomSheetLayout>
+</LinearLayout>
