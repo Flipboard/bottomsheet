@@ -47,14 +47,14 @@ public class PickerActivity extends BaseActivity {
                 // Filter out built in sharing options such as bluetooth and beam.
                 intentPickerSheet.setFilter(new IntentPickerSheetView.Filter() {
                     @Override
-                    public boolean include(IntentPickerSheetView.ActvityInfo info) {
+                    public boolean include(IntentPickerSheetView.ActivityInfo info) {
                         return !info.componentName.getPackageName().startsWith("com.android");
                     }
                 });
                 // Sort activities in reverse order for no good reason
-                intentPickerSheet.setSortMethod(new Comparator<IntentPickerSheetView.ActvityInfo>() {
+                intentPickerSheet.setSortMethod(new Comparator<IntentPickerSheetView.ActivityInfo>() {
                     @Override
-                    public int compare(IntentPickerSheetView.ActvityInfo lhs, IntentPickerSheetView.ActvityInfo rhs) {
+                    public int compare(IntentPickerSheetView.ActivityInfo lhs, IntentPickerSheetView.ActivityInfo rhs) {
                         return rhs.label.compareTo(lhs.label);
                     }
                 });
