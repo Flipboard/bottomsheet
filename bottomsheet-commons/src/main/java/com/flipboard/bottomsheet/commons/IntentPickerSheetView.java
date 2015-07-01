@@ -27,33 +27,33 @@ import flipboard.bottomsheet.commons.R;
 public class IntentPickerSheetView extends FrameLayout {
 
     public interface Filter {
-        boolean include(ActvityInfo info);
+        boolean include(ActivityInfo info);
     }
 
     public interface OnIntentPickedListener {
         void onIntentPicked(Intent intent);
     }
 
-    private class SortAlphabetically implements Comparator<ActvityInfo> {
+    private class SortAlphabetically implements Comparator<ActivityInfo> {
         @Override
-        public int compare(ActvityInfo lhs, ActvityInfo rhs) {
+        public int compare(ActivityInfo lhs, ActivityInfo rhs) {
             return lhs.label.compareTo(rhs.label);
         }
     }
 
     private class FilterNone implements Filter {
         @Override
-        public boolean include(ActvityInfo info) {
+        public boolean include(ActivityInfo info) {
             return true;
         }
     }
 
-    public class ActvityInfo {
+    public class ActivityInfo {
         public final Drawable icon;
         public final String label;
         public final ComponentName componentName;
 
-        ActvityInfo(Drawable icon, CharSequence label, ComponentName componentName) {
+        ActivityInfo(Drawable icon, CharSequence label, ComponentName componentName) {
             this.icon = icon;
             this.label = label.toString();
             this.componentName = componentName;
@@ -65,7 +65,7 @@ public class IntentPickerSheetView extends FrameLayout {
 
     private Adapter adapter;
     private Filter filter = new FilterNone();
-    private Comparator<ActvityInfo> sortMethod = new SortAlphabetically();
+    private Comparator<ActivityInfo> sortMethod = new SortAlphabetically();
 
     public IntentPickerSheetView(Context context, Intent intent, @StringRes int titleRes, OnIntentPickedListener listener) {
         this(context, intent, context.getString(titleRes), listener);
@@ -75,7 +75,7 @@ public class IntentPickerSheetView extends FrameLayout {
         super(context);
         this.intent = intent;
 
-        inflate(context, R.layout.intent_picker_sheet_view, this);
+        inflate(context, R.layout.grid_sheet_view, this);
         appGrid = (GridView) findViewById(R.id.grid);
         TextView titleView = (TextView) findViewById(R.id.title);
 
@@ -90,7 +90,7 @@ public class IntentPickerSheetView extends FrameLayout {
         });
     }
 
-    public void setSortMethod(Comparator<ActvityInfo> sortMethod) {
+    public void setSortMethod(Comparator<ActivityInfo> sortMethod) {
         this.sortMethod = sortMethod;
     }
 
@@ -114,37 +114,37 @@ public class IntentPickerSheetView extends FrameLayout {
 
     private class Adapter extends BaseAdapter {
 
-        final List<ActvityInfo> actvityInfos;
+        final List<ActivityInfo> activityInfos;
         final LayoutInflater inflater;
 
         public Adapter(Context context, Intent intent) {
             inflater = LayoutInflater.from(context);
             PackageManager pm = context.getPackageManager();
             List<ResolveInfo> infos = pm.queryIntentActivities(intent, 0);
-            actvityInfos = new ArrayList<>(infos.size());
+            activityInfos = new ArrayList<>(infos.size());
             for (ResolveInfo info : infos) {
                 ComponentName componentName = new ComponentName(info.activityInfo.packageName, info.activityInfo.name);
-                ActvityInfo actvityInfo = new ActvityInfo(info.loadIcon(pm), info.loadLabel(pm), componentName);
-                if (filter.include(actvityInfo)) {
-                    actvityInfos.add(actvityInfo);
+                ActivityInfo activityInfo = new ActivityInfo(info.loadIcon(pm), info.loadLabel(pm), componentName);
+                if (filter.include(activityInfo)) {
+                    activityInfos.add(activityInfo);
                 }
             }
-            Collections.sort(actvityInfos, sortMethod);
+            Collections.sort(activityInfos, sortMethod);
         }
 
         @Override
         public int getCount() {
-            return actvityInfos.size();
+            return activityInfos.size();
         }
 
         @Override
-        public ActvityInfo getItem(int position) {
-            return actvityInfos.get(position);
+        public ActivityInfo getItem(int position) {
+            return activityInfos.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return actvityInfos.get(position).label.hashCode();
+            return activityInfos.get(position).label.hashCode();
         }
 
         @Override
@@ -152,14 +152,14 @@ public class IntentPickerSheetView extends FrameLayout {
             ViewHolder holder;
 
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.intent_picker_grid_item, parent, false);
+                convertView = inflater.inflate(R.layout.sheet_grid_item, parent, false);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            ActvityInfo info = actvityInfos.get(position);
+            ActivityInfo info = activityInfos.get(position);
             holder.icon.setImageDrawable(info.icon);
             holder.label.setText(info.label);
 
