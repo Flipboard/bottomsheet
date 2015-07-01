@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="@string/document"
+        android:icon="@mipmap/ic_launcher"
+        />
+    <item
+        android:title="@string/spreadsheet"
+        android:icon="@mipmap/ic_launcher"
+        />
+    <item
+        android:title="@string/folder"
+        android:icon="@mipmap/ic_launcher"
+        />
+
+    <item
+        android:id="@+id/menu_subheader"
+        android:title=""
+        >
+        <menu>
+            <item
+                android:id="@+id/navigation_sub_item_1"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/upload_photos"/>
+            <item
+                android:id="@+id/navigation_sub_item_2"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/use_camera"/>
+        </menu>
+    </item>
+
+</menu>

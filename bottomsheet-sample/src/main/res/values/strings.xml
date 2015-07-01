@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">BottomSheet Sample</string>
     <string name="share">Share</string>
+    <string name="list_button">List</string>
+    <string name="grid_button">Grid</string>
     <string name="intent_picker">Intent Picker</string>
+    <string name="menu_resource">Inflating a Menu</string>
+    <string name="document">Document</string>
+    <string name="spreadsheet">Spreadsheet</string>
+    <string name="folder">Folder</string>
+    <string name="upload_photos">Upload photos or videos</string>
+    <string name="use_camera">Use camera</string>
     <string name="share_some_text">Share some text!</string>
 </resources>

@@ -13,5 +13,11 @@
         android:text="@string/intent_picker"
         />
 
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_resource"
+        />
 
 </LinearLayout>

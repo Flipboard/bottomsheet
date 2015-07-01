@@ -26,6 +26,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".sample.MainActivity" />
         </activity>
+        <activity
+            android:name=".sample.MenuActivity"
+            android:label="@string/menu_resource"
+            android:parentActivityName=".sample.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sample.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
