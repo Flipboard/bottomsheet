@@ -183,7 +183,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && isSheetShowing()) {
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 KeyEvent.DispatcherState state = getKeyDispatcherState();
                 if (state != null) {
