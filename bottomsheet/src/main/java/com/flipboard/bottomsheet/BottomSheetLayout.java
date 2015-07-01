@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Property;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -126,6 +127,8 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+
+        setFocusableInTouchMode(true);
     }
 
     /**
@@ -176,6 +179,35 @@ public class BottomSheetLayout extends FrameLayout {
         super.onLayout(changed, left, top, right, bottom);
         int bottomClip = (int) (getHeight() - Math.ceil(sheetTranslation));
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                KeyEvent.DispatcherState state = getKeyDispatcherState();
+                if (state != null) {
+                    state.startTracking(event, this);
+                }
+                return true;
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                KeyEvent.DispatcherState state = getKeyDispatcherState();
+                if (state != null) {
+                    state.handleUpEvent(event);
+                }
+                if (event.isTracking() && !event.isCanceled()) {
+                    if (isSheetShowing()) {
+                        if (getState() == BottomSheetLayout.State.EXPANDED) {
+                            peekSheet();
+                        } else {
+                            dismissSheet();
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return super.onKeyPreIme(keyCode, event);
     }
 
     private void setSheetTranslation(float sheetTranslation) {

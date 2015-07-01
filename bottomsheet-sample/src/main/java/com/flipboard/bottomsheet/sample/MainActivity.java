@@ -1,15 +1,15 @@
 package com.flipboard.bottomsheet.sample;
 
+import com.flipboard.bottomsheet.BottomSheetLayout;
+import com.flipboard.bottomsheet.R;
+import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.R;
-import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 
 import java.util.Comparator;
 
@@ -56,19 +56,6 @@ public class MainActivity extends Activity {
                 bottomSheetLayout.showWithSheetView(intentPickerSheet);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (bottomSheetLayout.isSheetShowing()) {
-            if (bottomSheetLayout.getState() == BottomSheetLayout.State.EXPANDED) {
-                bottomSheetLayout.peekSheet();
-            } else {
-                bottomSheetLayout.dismissSheet();
-            }
-        } else {
-            super.onBackPressed();
-        }
     }
 
 }
