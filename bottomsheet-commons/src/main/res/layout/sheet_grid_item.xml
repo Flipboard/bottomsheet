@@ -19,9 +19,11 @@
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="16dp"
+        android:gravity="center_horizontal"
         android:maxLines="1"
         android:textColor="@color/text_gray"
         android:textSize="12sp"
+        android:ellipsize="end"
         />
 
 </LinearLayout>
