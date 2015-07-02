@@ -4,20 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:padding="8dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        />
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
+        android:gravity="center_horizontal"
         android:maxLines="1"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"/>
+        android:textColor="@color/text_gray"
+        android:textSize="12sp"
+        android:ellipsize="end"
+        />
 
 </LinearLayout>
