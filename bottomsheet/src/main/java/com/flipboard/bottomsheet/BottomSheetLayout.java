@@ -630,6 +630,14 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
+     * Returns the current dismiss mode, which controls the behavior response to back presses when
+     * the current state is {@link State#EXPANDED}.
+     */
+    public State getDismissMode() {
+        return dismissMode;
+    }
+
+    /**
      * @return The current state of the sheet.
      */
     public State getState() {
