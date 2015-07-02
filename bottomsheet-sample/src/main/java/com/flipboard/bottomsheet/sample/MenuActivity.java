@@ -22,6 +22,7 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
+        bottomSheetLayout.setDismissMode(BottomSheetLayout.State.PEEKED);
         findViewById(R.id.list_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

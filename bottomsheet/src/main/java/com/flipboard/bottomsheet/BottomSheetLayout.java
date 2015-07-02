@@ -71,6 +71,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     private Rect contentClipRect = new Rect();
     private State state = State.HIDDEN;
+    private State dismissMode = State.HIDDEN;
     private TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     public boolean bottomSheetOwnsTouch;
     private boolean sheetViewOwnsTouch;
@@ -191,17 +192,15 @@ public class BottomSheetLayout extends FrameLayout {
                 }
                 return true;
             } else if (event.getAction() == KeyEvent.ACTION_UP) {
-                KeyEvent.DispatcherState state = getKeyDispatcherState();
-                if (state != null) {
-                    state.handleUpEvent(event);
+                KeyEvent.DispatcherState dispatcherState = getKeyDispatcherState();
+                if (dispatcherState != null) {
+                    dispatcherState.handleUpEvent(event);
                 }
-                if (event.isTracking() && !event.isCanceled()) {
-                    if (isSheetShowing()) {
-                        if (getState() == BottomSheetLayout.State.EXPANDED) {
-                            peekSheet();
-                        } else {
-                            dismissSheet();
-                        }
+                if (isSheetShowing() && event.isTracking() && !event.isCanceled()) {
+                    if (state == State.EXPANDED && dismissMode == State.PEEKED) {
+                        peekSheet();
+                    } else {
+                        dismissSheet();
                     }
                     return true;
                 }
@@ -618,6 +617,16 @@ public class BottomSheetLayout extends FrameLayout {
         });
         anim.start();
         currentAnimator = anim;
+    }
+
+    /**
+     * Controls the behavior on back button press when the state is {@link State#EXPANDED}.
+     *
+     * @param state {@link State#PEEKED} to show the peeked state on back press or {@link
+     *              State#HIDDEN} to completely hide the Bottom Sheet. Default is {@link  State#HIDDEN}.
+     */
+    public void setDismissMode(State state) {
+        dismissMode = state;
     }
 
     /**
