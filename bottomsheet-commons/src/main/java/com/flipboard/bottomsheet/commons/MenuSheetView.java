@@ -2,9 +2,11 @@ package com.flipboard.bottomsheet.commons;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -95,6 +97,8 @@ public class MenuSheetView extends FrameLayout {
         // Set up the title
         titleView = (TextView) findViewById(R.id.title);
         setTitle(title);
+
+        ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
     }
 
     /**
@@ -124,6 +128,14 @@ public class MenuSheetView extends FrameLayout {
         if (menuType == GRID) {
             float density = getResources().getDisplayMetrics().density;
             ((GridView) absListView).setNumColumns((int) (getWidth() / (100 * density)));
+        }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        // Necessary for showing elevation on 5.0+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setOutlineProvider(new Util.ShadowOutline(w, h));
         }
     }
 

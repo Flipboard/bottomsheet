@@ -1,12 +1,15 @@
 package com.flipboard.bottomsheet.commons;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.StringRes;
+import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import java.util.List;
 
 import flipboard.bottomsheet.commons.R;
 
+@SuppressLint("ViewConstructor")
 public class IntentPickerSheetView extends FrameLayout {
 
     public interface Filter {
@@ -88,6 +92,8 @@ public class IntentPickerSheetView extends FrameLayout {
                 listener.onIntentPicked(concreteIntent);
             }
         });
+
+        ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
     }
 
     public void setSortMethod(Comparator<ActivityInfo> sortMethod) {
@@ -110,6 +116,14 @@ public class IntentPickerSheetView extends FrameLayout {
         super.onLayout(changed, left, top, right, bottom);
         float density = getResources().getDisplayMetrics().density;
         appGrid.setNumColumns((int) (getWidth() / (100 * density)));
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        // Necessary for showing elevation on 5.0+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setOutlineProvider(new Util.ShadowOutline(w, h));
+        }
     }
 
     private class Adapter extends BaseAdapter {

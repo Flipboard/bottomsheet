@@ -1,7 +1,11 @@
 package com.flipboard.bottomsheet.commons;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Outline;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 
 public class Util {
 
@@ -16,4 +20,23 @@ public class Util {
         return Math.round(px);
     }
 
+    /**
+     * A helper class for providing a shadow on sheets
+     */
+    @TargetApi(21)
+    static class ShadowOutline extends ViewOutlineProvider {
+
+        int width;
+        int height;
+
+        ShadowOutline(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        @Override
+        public void getOutline(View view, Outline outline) {
+            outline.setRect(0, 0, width, height);
+        }
+    }
 }
