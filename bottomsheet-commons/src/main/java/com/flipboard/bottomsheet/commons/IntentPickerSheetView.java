@@ -158,7 +158,7 @@ public class IntentPickerSheetView extends FrameLayout {
 
         @Override
         public long getItemId(int position) {
-            return activityInfos.get(position).label.hashCode();
+            return activityInfos.get(position).componentName.hashCode();
         }
 
         @Override
