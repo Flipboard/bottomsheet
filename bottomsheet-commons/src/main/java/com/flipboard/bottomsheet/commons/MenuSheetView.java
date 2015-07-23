@@ -33,9 +33,10 @@ import static com.flipboard.bottomsheet.commons.MenuSheetView.MenuType.LIST;
 
 /**
  * A SheetView that can represent a menu resource as a list or grid.
- * <p/>
+ * <p>
  * A list can support submenus, and will include a divider and header for them where appropriate.
  * Grids currently don't support submenus, and don't in the Material Design spec either.
+ * </p>
  */
 @SuppressLint("ViewConstructor")
 public class MenuSheetView extends FrameLayout {
