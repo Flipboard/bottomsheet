@@ -71,7 +71,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     private Rect contentClipRect = new Rect();
     private State state = State.HIDDEN;
-    private State dismissMode = State.HIDDEN;
+    private boolean peekOnDismiss = false;
     private TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     public boolean bottomSheetOwnsTouch;
     private boolean sheetViewOwnsTouch;
@@ -149,12 +149,12 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     @Override
-    public void addView(@NonNull View child, int index, ViewGroup.LayoutParams params) {
+    public void addView(@NonNull View child, int index, @NonNull ViewGroup.LayoutParams params) {
         addView(child);
     }
 
     @Override
-    public void addView(@NonNull View child, ViewGroup.LayoutParams params) {
+    public void addView(@NonNull View child, @NonNull ViewGroup.LayoutParams params) {
         addView(child);
     }
 
@@ -183,7 +183,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     @Override
-    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+    public boolean onKeyPreIme(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && isSheetShowing()) {
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 KeyEvent.DispatcherState state = getKeyDispatcherState();
@@ -197,7 +197,7 @@ public class BottomSheetLayout extends FrameLayout {
                     dispatcherState.handleUpEvent(event);
                 }
                 if (isSheetShowing() && event.isTracking() && !event.isCanceled()) {
-                    if (state == State.EXPANDED && dismissMode == State.PEEKED) {
+                    if (state == State.EXPANDED && peekOnDismiss) {
                         peekSheet();
                     } else {
                         dismissSheet();
@@ -239,12 +239,12 @@ public class BottomSheetLayout extends FrameLayout {
         return sheetTranslation;
     }
 
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
         return isSheetShowing();
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (!isSheetShowing()) {
             return false;
         }
@@ -455,7 +455,7 @@ public class BottomSheetLayout extends FrameLayout {
         anim.setInterpolator(animationInterpolator);
         anim.addListener(new CancelDetectionAnimationListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(@NonNull Animator animation) {
                 if (!canceled) {
                     currentAnimator = null;
                 }
@@ -477,7 +477,7 @@ public class BottomSheetLayout extends FrameLayout {
         anim.setInterpolator(animationInterpolator);
         anim.addListener(new CancelDetectionAnimationListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(@NonNull Animator animation) {
                 if (!canceled) {
                     currentAnimator = null;
                 }
@@ -622,19 +622,19 @@ public class BottomSheetLayout extends FrameLayout {
     /**
      * Controls the behavior on back button press when the state is {@link State#EXPANDED}.
      *
-     * @param state {@link State#PEEKED} to show the peeked state on back press or {@link
-     *              State#HIDDEN} to completely hide the Bottom Sheet. Default is {@link  State#HIDDEN}.
+     * @param peekOnDismiss true to show the peeked state on back press or false to completely hide
+     *                      the Bottom Sheet. Default is false.
      */
-    public void setDismissMode(State state) {
-        dismissMode = state;
+    public void setPeekOnDismiss(boolean peekOnDismiss) {
+        this.peekOnDismiss = peekOnDismiss;
     }
 
     /**
-     * Returns the current dismiss mode, which controls the behavior response to back presses when
-     * the current state is {@link State#EXPANDED}.
+     * Returns the current peekOnDismiss value, which controls the behavior response to back presses
+     * when the current state is {@link State#EXPANDED}.
      */
-    public State getDismissMode() {
-        return dismissMode;
+    public boolean getPeekOnDismiss() {
+        return peekOnDismiss;
     }
 
     /**
@@ -665,7 +665,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Enable or disable dimming of the content view while a sheet is presented. If enabled a
-     * transparent black dim is overlayed on top of the content view indicating that the sheet is the
+     * transparent black dim is overlaid on top of the content view indicating that the sheet is the
      * foreground view. This dim is animated into place is coordination with the sheet view.
      * Defaults to true.
      *
