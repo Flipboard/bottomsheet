@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Property;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -70,6 +71,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     private Rect contentClipRect = new Rect();
     private State state = State.HIDDEN;
+    private State dismissMode = State.HIDDEN;
     private TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     public boolean bottomSheetOwnsTouch;
     private boolean sheetViewOwnsTouch;
@@ -126,6 +128,8 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+
+        setFocusableInTouchMode(true);
     }
 
     /**
@@ -176,6 +180,33 @@ public class BottomSheetLayout extends FrameLayout {
         super.onLayout(changed, left, top, right, bottom);
         int bottomClip = (int) (getHeight() - Math.ceil(sheetTranslation));
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && isSheetShowing()) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                KeyEvent.DispatcherState state = getKeyDispatcherState();
+                if (state != null) {
+                    state.startTracking(event, this);
+                }
+                return true;
+            } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                KeyEvent.DispatcherState dispatcherState = getKeyDispatcherState();
+                if (dispatcherState != null) {
+                    dispatcherState.handleUpEvent(event);
+                }
+                if (isSheetShowing() && event.isTracking() && !event.isCanceled()) {
+                    if (state == State.EXPANDED && dismissMode == State.PEEKED) {
+                        peekSheet();
+                    } else {
+                        dismissSheet();
+                    }
+                    return true;
+                }
+            }
+        }
+        return super.onKeyPreIme(keyCode, event);
     }
 
     private void setSheetTranslation(float sheetTranslation) {
@@ -586,6 +617,24 @@ public class BottomSheetLayout extends FrameLayout {
         });
         anim.start();
         currentAnimator = anim;
+    }
+
+    /**
+     * Controls the behavior on back button press when the state is {@link State#EXPANDED}.
+     *
+     * @param state {@link State#PEEKED} to show the peeked state on back press or {@link
+     *              State#HIDDEN} to completely hide the Bottom Sheet. Default is {@link  State#HIDDEN}.
+     */
+    public void setDismissMode(State state) {
+        dismissMode = state;
+    }
+
+    /**
+     * Returns the current dismiss mode, which controls the behavior response to back presses when
+     * the current state is {@link State#EXPANDED}.
+     */
+    public State getDismissMode() {
+        return dismissMode;
     }
 
     /**

@@ -1,11 +1,11 @@
 package com.flipboard.bottomsheet.sample;
 
+import com.flipboard.bottomsheet.R;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import com.flipboard.bottomsheet.R;
 
 
 public class MainActivity extends AppCompatActivity {

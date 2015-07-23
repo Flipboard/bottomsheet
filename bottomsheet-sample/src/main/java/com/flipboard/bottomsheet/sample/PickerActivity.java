@@ -1,23 +1,26 @@
 package com.flipboard.bottomsheet.sample;
 
+import com.flipboard.bottomsheet.BottomSheetLayout;
+import com.flipboard.bottomsheet.R;
+import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.R;
-import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 
 import java.util.Comparator;
 
 /**
  * Activity demonstrating the use of {@link IntentPickerSheetView}
  */
-public class PickerActivity extends BaseActivity {
+public class PickerActivity extends AppCompatActivity {
+
+    protected BottomSheetLayout bottomSheetLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

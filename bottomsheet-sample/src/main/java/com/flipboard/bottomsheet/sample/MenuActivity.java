@@ -1,24 +1,28 @@
 package com.flipboard.bottomsheet.sample;
 
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;
 import com.flipboard.bottomsheet.commons.MenuSheetView;
 
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 /**
  * Activity demonstrating the use of {@link MenuSheetView}
  */
-public class MenuActivity extends BaseActivity {
+public class MenuActivity extends AppCompatActivity {
+
+    protected BottomSheetLayout bottomSheetLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
+        bottomSheetLayout.setDismissMode(BottomSheetLayout.State.PEEKED);
         findViewById(R.id.list_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
