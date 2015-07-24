@@ -240,7 +240,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
-        return isSheetShowing();
+        return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
     }
 
     @Override
