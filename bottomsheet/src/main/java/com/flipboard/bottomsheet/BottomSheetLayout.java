@@ -126,7 +126,7 @@ public class BottomSheetLayout extends FrameLayout {
         touchSlop = viewConfiguration.getScaledTouchSlop();
 
         dimView = new View(getContext());
-        dimView.setBackgroundColor(Color.BLACK);
+        dimView.setBackgroundColor(Color.TRANSPARENT);
         dimView.setAlpha(0);
 
         setFocusableInTouchMode(true);
