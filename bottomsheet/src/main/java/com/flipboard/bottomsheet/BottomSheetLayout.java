@@ -87,6 +87,7 @@ public class BottomSheetLayout extends FrameLayout {
     private Animator currentAnimator;
     private OnSheetStateChangeListener onSheetStateChangeListener;
     private View dimView;
+    private boolean interceptContentTouch = true;
 
     /** Snapshot of the touch's y position on a down event */
     private float downY;
@@ -240,7 +241,11 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
-        return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
+        if (interceptContentTouch) {
+            return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
+        } else {
+            return state == State.EXPANDED;
+        }
     }
 
     @Override
@@ -378,7 +383,7 @@ public class BottomSheetLayout extends FrameLayout {
         } else {
             // If the user clicks outside of the bottom sheet area we should dismiss the bottom sheet.
             boolean touchAboveBottomSheet = event.getY() < (getHeight() - getSheetTranslation());
-            if (event.getAction() == MotionEvent.ACTION_UP && touchAboveBottomSheet) {
+            if (event.getAction() == MotionEvent.ACTION_UP && touchAboveBottomSheet && interceptContentTouch) {
                 dismissSheet();
                 return true;
             }
@@ -635,6 +640,24 @@ public class BottomSheetLayout extends FrameLayout {
      */
     public boolean getPeekOnDismiss() {
         return peekOnDismiss;
+    }
+
+    /**
+     * Controls whether or not child view interaction is possible when the bottomsheet is open.
+     *
+     * @param interceptContentTouch true to intercept content view touches or false to allow
+     *                              interaction with Bottom Sheet's content view
+     */
+    public void setInterceptContentTouch(boolean interceptContentTouch) {
+        this.interceptContentTouch = interceptContentTouch;
+    }
+
+    /**
+     * @return true if we are intercepting content view touches or false to allow interaction with
+     * Bottom Sheet's content view. Default value is true.
+     */
+    public boolean getInterceptContentTouch() {
+        return interceptContentTouch;
     }
 
     /**
