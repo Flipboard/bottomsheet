@@ -86,6 +86,7 @@ public class BottomSheetLayout extends FrameLayout {
     private boolean useHardwareLayerWhileAnimating = true;
     private Animator currentAnimator;
     private OnSheetStateChangeListener onSheetStateChangeListener;
+    private OnLayoutChangeListener sheetViewOnLayoutChangeListener;
     private View dimView;
     private boolean interceptContentTouch = true;
 
@@ -583,6 +584,19 @@ public class BottomSheetLayout extends FrameLayout {
                 return true;
             }
         });
+
+        // sheetView should always be anchored to the bottom of the screen
+        sheetViewOnLayoutChangeListener = new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View sheetView, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (state != State.HIDDEN) {
+                    if (bottom < oldBottom) {
+                        setSheetTranslation(sheetView.getMeasuredHeight());
+                    }
+                }
+            }
+        };
+        sheetView.addOnLayoutChangeListener(sheetViewOnLayoutChangeListener);
     }
 
     /**
@@ -593,6 +607,8 @@ public class BottomSheetLayout extends FrameLayout {
             // no-op
             return;
         }
+        final View sheetView = getSheetView();
+        sheetView.removeOnLayoutChangeListener(sheetViewOnLayoutChangeListener);
         cancelCurrentAnimation();
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, SHEET_TRANSLATION, 0);
         anim.setDuration(ANIMATION_DURATION);
@@ -604,7 +620,7 @@ public class BottomSheetLayout extends FrameLayout {
                     currentAnimator = null;
                     setState(State.HIDDEN);
                     setSheetLayerTypeIfEnabled(LAYER_TYPE_NONE);
-                    removeView(getSheetView());
+                    removeView(sheetView);
 
                     if (onSheetDismissedListener != null) {
                         onSheetDismissedListener.onDismissed(BottomSheetLayout.this);
