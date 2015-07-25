@@ -7,7 +7,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
-public class Util {
+class Util {
 
     /**
      * Convert a dp float value to pixels
@@ -38,5 +38,9 @@ public class Util {
         public void getOutline(View view, Outline outline) {
             outline.setRect(0, 0, width, height);
         }
+    }
+
+    private Util() {
+        throw new AssertionError("No Instances");
     }
 }
