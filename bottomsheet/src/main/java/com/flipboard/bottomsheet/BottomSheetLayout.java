@@ -592,14 +592,12 @@ public class BottomSheetLayout extends FrameLayout {
             @Override
             public void onLayoutChange(View sheetView, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 int newSheetViewHeight = sheetView.getMeasuredHeight();
-                if (state != State.HIDDEN) {
-                    if (newSheetViewHeight < currentSheetViewHeight) {
-                        // The sheet can no longer be in the expanded state if it has shrunk
-                        if (state == State.EXPANDED) {
-                            setState(State.PEEKED);
-                        }
-                        setSheetTranslation(sheetView.getMeasuredHeight());
+                if (state != State.HIDDEN && newSheetViewHeight < currentSheetViewHeight) {
+                    // The sheet can no longer be in the expanded state if it has shrunk
+                    if (state == State.EXPANDED) {
+                        setState(State.PEEKED);
                     }
+                    setSheetTranslation(newSheetViewHeight);
                 }
                 currentSheetViewHeight = newSheetViewHeight;
             }
