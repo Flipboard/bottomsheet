@@ -589,6 +589,7 @@ public class BottomSheetLayout extends FrameLayout {
      * Dismiss the sheet currently being presented.
      */
     public void dismissSheet() {
+
         dimView.setBackgroundColor(Color.TRANSPARENT);
         if (state == State.HIDDEN) {
             // no-op
