@@ -126,7 +126,7 @@ public class BottomSheetLayout extends FrameLayout {
         touchSlop = viewConfiguration.getScaledTouchSlop();
 
         dimView = new View(getContext());
-        dimView.setBackgroundColor(Color.TRANSPARENT);
+        dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
 
         setFocusableInTouchMode(true);
@@ -470,6 +470,7 @@ public class BottomSheetLayout extends FrameLayout {
      * Set the presented sheet to be in a peeked state.
      */
     public void peekSheet() {
+        dimView.setBackgroundColor(Color.BLACK);
         cancelCurrentAnimation();
         setSheetLayerTypeIfEnabled(LAYER_TYPE_HARDWARE);
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, SHEET_TRANSLATION, getPeekSheetTranslation());
@@ -588,6 +589,7 @@ public class BottomSheetLayout extends FrameLayout {
      * Dismiss the sheet currently being presented.
      */
     public void dismissSheet() {
+        dimView.setBackgroundColor(Color.TRANSPARENT);
         if (state == State.HIDDEN) {
             // no-op
             return;
