@@ -27,7 +27,7 @@ public class BottomSheetLayout extends FrameLayout {
     private static final Property<BottomSheetLayout, Float> SHEET_TRANSLATION = new Property<BottomSheetLayout, Float>(Float.class, "sheetTranslation") {
         @Override
         public Float get(BottomSheetLayout object) {
-            return object.getSheetTranslation();
+            return object.sheetTranslation;
         }
 
         @Override
@@ -236,10 +236,6 @@ public class BottomSheetLayout extends FrameLayout {
         return 0;
     }
 
-    private float getSheetTranslation() {
-        return sheetTranslation;
-    }
-
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
         if (interceptContentTouch) {
             return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
@@ -263,7 +259,7 @@ public class BottomSheetLayout extends FrameLayout {
             sheetViewOwnsTouch = false;
             downY = event.getY();
             downX = event.getX();
-            downSheetTranslation = getSheetTranslation();
+            downSheetTranslation = sheetTranslation;
             downState = state;
             velocityTracker.clear();
         }
@@ -307,11 +303,11 @@ public class BottomSheetLayout extends FrameLayout {
             if (state == State.EXPANDED && scrollingDown && !canScrollUp) {
                 // Reset variables so deltas are correctly calculated from the point at which the sheet was 'detached' from the top.
                 downY = event.getY();
-                downSheetTranslation = getSheetTranslation();
+                downSheetTranslation = sheetTranslation;
                 velocityTracker.clear();
                 setState(State.PEEKED);
                 setSheetLayerTypeIfEnabled(LAYER_TYPE_HARDWARE);
-                newSheetTranslation = getSheetTranslation();
+                newSheetTranslation = sheetTranslation;
 
                 // Dispatch a cancel event to the sheet to make sure its touch handling is cleaned up nicely.
                 MotionEvent cancelEvent = MotionEvent.obtain(event);
@@ -365,7 +361,7 @@ public class BottomSheetLayout extends FrameLayout {
                         velocityTracker.computeCurrentVelocity(1000);
                         float velocityY = velocityTracker.getYVelocity();
                         if (Math.abs(velocityY) < minFlingVelocity) {
-                            if (getSheetTranslation() > getHeight() / 2) {
+                            if (sheetTranslation > getHeight() / 2) {
                                 expandSheet();
                             } else {
                                 peekSheet();
@@ -382,7 +378,7 @@ public class BottomSheetLayout extends FrameLayout {
             }
         } else {
             // If the user clicks outside of the bottom sheet area we should dismiss the bottom sheet.
-            boolean touchAboveBottomSheet = event.getY() < (getHeight() - getSheetTranslation());
+            boolean touchAboveBottomSheet = event.getY() < (getHeight() - sheetTranslation);
             if (event.getAction() == MotionEvent.ACTION_UP && touchAboveBottomSheet && interceptContentTouch) {
                 dismissSheet();
                 return true;
