@@ -88,6 +88,7 @@ public class BottomSheetLayout extends FrameLayout {
     private OnSheetStateChangeListener onSheetStateChangeListener;
     private View dimView;
     private boolean interceptContentTouch = true;
+    private float peek;
 
     /** Snapshot of the touch's y position on a down event */
     private float downY;
@@ -129,6 +130,8 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+
+        peek = 0; //getHeight() returns 0 at start!
 
         setFocusableInTouchMode(true);
     }
@@ -236,11 +239,11 @@ public class BottomSheetLayout extends FrameLayout {
         return 0;
     }
 
-    public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
+    public boolean onInterceptTouchEvent(@NonNull MotionEvent event) {
         if (interceptContentTouch) {
-            return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
+            return event.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
         } else {
-            return state == State.EXPANDED;
+            return state == State.EXPANDED || event.getY() > (getHeight() - sheetTranslation);
         }
     }
 
@@ -493,7 +496,11 @@ public class BottomSheetLayout extends FrameLayout {
      * @return The peeked state translation for the presented sheet view. Translation is counted from the bottom of the view.
      */
     public float getPeekSheetTranslation() {
-        return hasFullHeightSheet() ?  getHeight() / 3 : getSheetView().getHeight();
+        return peek == 0 ? (hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight()) : peek;
+    }
+
+    public void setPeekSheetTranslation(float peek) {
+        this.peek = peek;
     }
 
     /**
