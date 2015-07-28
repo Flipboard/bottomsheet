@@ -512,6 +512,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Set custom height for PEEKED state.
+     *
      * @param peek
      */
     public void setPeekSheetTranslation(float peek) {
@@ -676,7 +677,7 @@ public class BottomSheetLayout extends FrameLayout {
      * Returns the current peekOnDismiss value, which controls the behavior response to back presses
      * when the current state is {@link State#EXPANDED}.
      */
-    public boolean isPeekOnDismiss() {
+    public boolean getPeekOnDismiss() {
         return peekOnDismiss;
     }
 
@@ -694,7 +695,7 @@ public class BottomSheetLayout extends FrameLayout {
      * @return true if we are intercepting content view touches or false to allow interaction with
      * Bottom Sheet's content view. Default value is true.
      */
-    public boolean isInterceptContentTouch() {
+    public boolean getInterceptContentTouch() {
         return interceptContentTouch;
     }
 
