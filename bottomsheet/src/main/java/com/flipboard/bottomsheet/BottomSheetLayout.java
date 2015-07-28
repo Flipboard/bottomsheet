@@ -90,6 +90,7 @@ public class BottomSheetLayout extends FrameLayout {
     private View dimView;
     private boolean interceptContentTouch = true;
     private int currentSheetViewHeight;
+    private boolean hasIntercepted;
 
     /** Snapshot of the touch's y position on a down event */
     private float downY;
@@ -239,11 +240,16 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
-        if (interceptContentTouch) {
-            return ev.getActionMasked() == MotionEvent.ACTION_DOWN && isSheetShowing();
-        } else {
-            return state == State.EXPANDED;
+        boolean downAction = ev.getActionMasked() == MotionEvent.ACTION_DOWN;
+        if (downAction) {
+            hasIntercepted = false;
         }
+        if (interceptContentTouch || ev.getY() > getHeight() - sheetTranslation) {
+            hasIntercepted = downAction && isSheetShowing();
+        } else {
+            hasIntercepted = false;
+        }
+        return hasIntercepted;
     }
 
     @Override
@@ -253,6 +259,9 @@ public class BottomSheetLayout extends FrameLayout {
         }
         if (isAnimating()) {
             return false;
+        }
+        if (!hasIntercepted) {
+            return onInterceptTouchEvent(event);
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // Snapshot the state of things when finger touches the screen.
