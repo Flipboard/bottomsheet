@@ -507,7 +507,11 @@ public class BottomSheetLayout extends FrameLayout {
      * @return The peeked state translation for the presented sheet view. Translation is counted from the bottom of the view.
      */
     public float getPeekSheetTranslation() {
-        return peek == 0 ? (hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight()) : peek;
+        return peek == 0 ? getDefaultPeekTranslation() : peek;
+    }
+
+    private float getDefaultPeekTranslation() {
+        return hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight();
     }
 
     /**
