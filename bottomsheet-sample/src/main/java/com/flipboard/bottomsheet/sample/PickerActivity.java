@@ -1,18 +1,21 @@
 package com.flipboard.bottomsheet.sample;
 
-import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.R;
-import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
-
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.flipboard.bottomsheet.BottomSheetLayout;
+import com.flipboard.bottomsheet.R;
+import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
+
+import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -61,6 +64,12 @@ public class PickerActivity extends AppCompatActivity {
                         return rhs.label.compareTo(lhs.label);
                     }
                 });
+
+                // Add custom mixin example
+                Drawable customDrawable = ResourcesCompat.getDrawable(getResources(), R.mipmap.ic_launcher, null);
+                IntentPickerSheetView.ActivityInfo customInfo = new IntentPickerSheetView.ActivityInfo(customDrawable, "Custom mix-in", MainActivity.class);
+                intentPickerSheet.setMixins(Collections.singletonList(customInfo));
+
                 bottomSheetLayout.showWithSheetView(intentPickerSheet);
             }
         });

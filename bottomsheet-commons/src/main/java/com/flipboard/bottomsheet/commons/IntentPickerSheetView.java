@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -52,10 +53,19 @@ public class IntentPickerSheetView extends FrameLayout {
         }
     }
 
-    public class ActivityInfo {
+    /**
+     * Represents an item in the picker grid
+     */
+    public static class ActivityInfo {
         public final Drawable icon;
         public final String label;
         public final ComponentName componentName;
+
+        public ActivityInfo(Drawable icon, String label, Class<?> clazz) {
+            this.icon = icon;
+            this.label = label;
+            this.componentName = new ComponentName(clazz.getPackage().getName(), clazz.getName());
+        }
 
         ActivityInfo(Drawable icon, CharSequence label, ComponentName componentName) {
             this.icon = icon;
@@ -66,6 +76,7 @@ public class IntentPickerSheetView extends FrameLayout {
 
     private final Intent intent;
     private final GridView appGrid;
+    private final List<ActivityInfo> mixins = new ArrayList<>();
 
     private Adapter adapter;
     private Filter filter = new FilterNone();
@@ -104,10 +115,24 @@ public class IntentPickerSheetView extends FrameLayout {
         this.filter = filter;
     }
 
+    /**
+     * Adds custom mixins to the resulting picker sheet
+     *
+     * @param infos Custom ActivityInfo classes to mix in
+     */
+    public void setMixins(@NonNull List<ActivityInfo> infos) {
+        mixins.clear();
+        mixins.addAll(infos);
+    }
+
+    public List<ActivityInfo> getMixins() {
+        return this.mixins;
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        this.adapter = new Adapter(getContext(), intent);
+        this.adapter = new Adapter(getContext(), intent, mixins);
         appGrid.setAdapter(this.adapter);
     }
 
@@ -131,11 +156,12 @@ public class IntentPickerSheetView extends FrameLayout {
         final List<ActivityInfo> activityInfos;
         final LayoutInflater inflater;
 
-        public Adapter(Context context, Intent intent) {
+        public Adapter(Context context, Intent intent, List<ActivityInfo> mixins) {
             inflater = LayoutInflater.from(context);
             PackageManager pm = context.getPackageManager();
             List<ResolveInfo> infos = pm.queryIntentActivities(intent, 0);
-            activityInfos = new ArrayList<>(infos.size());
+            activityInfos = new ArrayList<>(infos.size() + mixins.size());
+            activityInfos.addAll(mixins);
             for (ResolveInfo info : infos) {
                 ComponentName componentName = new ComponentName(info.activityInfo.packageName, info.activityInfo.name);
                 ActivityInfo activityInfo = new ActivityInfo(info.loadIcon(pm), info.loadLabel(pm), componentName);
