@@ -150,6 +150,7 @@ public class BottomSheetLayout extends FrameLayout {
         Point point = new Point();
         ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
         screenWidth = point.x;
+        sheetEndX = screenWidth;
     }
 
     /**
@@ -418,7 +419,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private boolean isXInSheet(float x) {
-        return !isTablet || x > sheetStartX && x < sheetEndX;
+        return !isTablet || x >= sheetStartX && x <= sheetEndX;
     }
 
     private boolean isAnimating() {
@@ -685,7 +686,7 @@ public class BottomSheetLayout extends FrameLayout {
         anim.start();
         currentAnimator = anim;
         sheetStartX = 0;
-        sheetEndX = 0;
+        sheetEndX = screenWidth;
     }
 
     /**
