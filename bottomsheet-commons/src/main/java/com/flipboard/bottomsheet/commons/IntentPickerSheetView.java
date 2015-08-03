@@ -140,7 +140,7 @@ public class IntentPickerSheetView extends FrameLayout {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         final float density = getResources().getDisplayMetrics().density;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
             appGrid.setNumColumns((int) (getWidth() / (100 * density)));
         } else {
             // On Jelly Bean and below setNumColumns does not redraw the view if we call it during
