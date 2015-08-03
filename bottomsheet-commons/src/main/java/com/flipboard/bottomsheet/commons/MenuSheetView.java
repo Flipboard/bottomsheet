@@ -128,7 +128,7 @@ public class MenuSheetView extends FrameLayout {
         super.onLayout(changed, left, top, right, bottom);
         if (menuType == GRID) {
             final float density = getResources().getDisplayMetrics().density;
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 ((GridView) absListView).setNumColumns((int) (getWidth() / (100 * density)));
             } else {
                 // On Jelly Bean and below setNumColumns does not redraw the view if we call it during
