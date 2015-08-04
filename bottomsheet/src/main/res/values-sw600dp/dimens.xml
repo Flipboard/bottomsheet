@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bottomsheet_default_sheet_width">446dp</dimen>
+</resources>

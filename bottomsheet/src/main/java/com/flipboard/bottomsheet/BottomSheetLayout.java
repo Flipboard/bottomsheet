@@ -7,11 +7,13 @@ import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Property;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -19,8 +21,11 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+
+import flipboard.bottomsheet.R;
 
 public class BottomSheetLayout extends FrameLayout {
 
@@ -93,6 +98,13 @@ public class BottomSheetLayout extends FrameLayout {
     private boolean hasIntercepted;
     private float peek;
 
+    /** Some values we need to manage width on tablets */
+    private int screenWidth = 0;
+    private final boolean isTablet = getResources().getBoolean(R.bool.bottomsheet_is_tablet);
+    private final int defaultSheetWidth = getResources().getDimensionPixelSize(R.dimen.bottomsheet_default_sheet_width);
+    private int sheetStartX = 0;
+    private int sheetEndX = 0;
+
     /** Snapshot of the touch's y position on a down event */
     private float downY;
 
@@ -137,6 +149,11 @@ public class BottomSheetLayout extends FrameLayout {
         peek = 0;//getHeight() return 0 at start!
 
         setFocusableInTouchMode(true);
+
+        Point point = new Point();
+        ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
+        screenWidth = point.x;
+        sheetEndX = screenWidth;
     }
 
     /**
@@ -247,7 +264,7 @@ public class BottomSheetLayout extends FrameLayout {
         if (downAction) {
             hasIntercepted = false;
         }
-        if (interceptContentTouch || ev.getY() > getHeight() - sheetTranslation) {
+        if (interceptContentTouch || (ev.getY() > getHeight() - sheetTranslation && isXInSheet(ev.getX()))) {
             hasIntercepted = downAction && isSheetShowing();
         } else {
             hasIntercepted = false;
@@ -392,16 +409,20 @@ public class BottomSheetLayout extends FrameLayout {
             }
         } else {
             // If the user clicks outside of the bottom sheet area we should dismiss the bottom sheet.
-            boolean touchAboveBottomSheet = event.getY() < (getHeight() - sheetTranslation);
-            if (event.getAction() == MotionEvent.ACTION_UP && touchAboveBottomSheet && interceptContentTouch) {
+            boolean touchOutsideBottomSheet = event.getY() < getHeight() - sheetTranslation || !isXInSheet(event.getX());
+            if (event.getAction() == MotionEvent.ACTION_UP && touchOutsideBottomSheet && interceptContentTouch) {
                 dismissSheet();
                 return true;
             }
 
-            event.offsetLocation(0, sheetTranslation - getHeight());
+            event.offsetLocation(isTablet ? getX() - sheetStartX : 0, sheetTranslation - getHeight());
             getSheetView().dispatchTouchEvent(event);
         }
         return true;
+    }
+
+    private boolean isXInSheet(float x) {
+        return !isTablet || x >= sheetStartX && x <= sheetEndX;
     }
 
     private boolean isAnimating() {
@@ -580,12 +601,27 @@ public class BottomSheetLayout extends FrameLayout {
         if (state != State.HIDDEN) {
             throw new IllegalStateException("A sheet view is already presented, make sure to dismiss it before showing another.");
         }
+
         LayoutParams params = (LayoutParams) sheetView.getLayoutParams();
-        if (params != null) {
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        } else {
-            params = generateDefaultLayoutParams();
+        if (params == null) {
+            params = new LayoutParams(isTablet ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, Gravity.CENTER_HORIZONTAL);
         }
+
+        if (isTablet && params.width == FrameLayout.LayoutParams.WRAP_CONTENT) {
+
+            // Center by default if they didn't specify anything
+            if (params.gravity == -1) {
+                params.gravity = Gravity.CENTER_HORIZONTAL;
+            }
+
+            params.width = defaultSheetWidth;
+
+            // Update start and end coordinates for touch reference
+            int horizontalSpacing = screenWidth - defaultSheetWidth;
+            sheetStartX = horizontalSpacing / 2;
+            sheetEndX = screenWidth - sheetStartX;
+        }
+
         super.addView(sheetView, -1, params);
         initializeSheetValues();
         this.viewTransformer = viewTransformer;
@@ -665,6 +701,8 @@ public class BottomSheetLayout extends FrameLayout {
         });
         anim.start();
         currentAnimator = anim;
+        sheetStartX = 0;
+        sheetEndX = screenWidth;
     }
 
     /**
