@@ -1,6 +1,6 @@
 #BottomSheet
 
-[![Join the chat at https://gitter.im/Flipboard/bottomsheet](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Flipboard/bottomsheet?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status on Travis:](https://travis-ci.org/Flipboard/bottomsheet.svg?branch=master)](https://travis-ci.org/Flipboard/bottomsheet) [![Join the chat at https://gitter.im/Flipboard/bottomsheet](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Flipboard/bottomsheet?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 BottomSheet is an Android component which presents a dismissible view from the bottom of the screen. BottomSheet can be a useful replacement for dialogs and menus but can hold any view so the use cases are endless. This repository includes the BottomSheet component itself but also includes a set of common view components presented in a bottom sheet. These are located in the commons module.
 
