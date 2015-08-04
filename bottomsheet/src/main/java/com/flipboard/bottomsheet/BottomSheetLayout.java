@@ -91,6 +91,7 @@ public class BottomSheetLayout extends FrameLayout {
     private boolean interceptContentTouch = true;
     private int currentSheetViewHeight;
     private boolean hasIntercepted;
+    private float peek;
 
     /** Snapshot of the touch's y position on a down event */
     private float downY;
@@ -132,6 +133,8 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+
+        peek = 0;//getHeight() return 0 at start!
 
         setFocusableInTouchMode(true);
     }
@@ -504,7 +507,20 @@ public class BottomSheetLayout extends FrameLayout {
      * @return The peeked state translation for the presented sheet view. Translation is counted from the bottom of the view.
      */
     public float getPeekSheetTranslation() {
-        return hasFullHeightSheet() ?  getHeight() / 3 : getSheetView().getHeight();
+        return peek == 0 ? getDefaultPeekTranslation() : peek;
+    }
+
+    private float getDefaultPeekTranslation() {
+        return hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight();
+    }
+
+    /**
+     * Set custom height for PEEKED state.
+     *
+     * @param peek
+     */
+    public void setPeekSheetTranslation(float peek) {
+        this.peek = peek;
     }
 
     /**
