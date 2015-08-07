@@ -11,4 +11,10 @@
     <string name="upload_photos">Upload photos or videos</string>
     <string name="use_camera">Use camera</string>
     <string name="share_some_text">Share some text!</string>
+    <string name="pager_sheet">Inflating a Pager</string>
+    <string name="icons_pager">Icon tabs</string>
+    <string name="text_pager">Text tabs</string>
+    <string name="icons_text_pager">Icon and text tabs</string>
+    <string name="custom_pager">Custom view tabs</string>
+    <string name="scrollable_pager">Scrollable tabs</string>
 </resources>

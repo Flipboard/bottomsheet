@@ -6,8 +6,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".sample.MainActivity"
             android:label="@string/app_name" >
@@ -20,8 +19,7 @@
         <activity
             android:name=".sample.PickerActivity"
             android:label="@string/intent_picker"
-            android:parentActivityName=".sample.MainActivity"
-            >
+            android:parentActivityName=".sample.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".sample.MainActivity" />
@@ -29,6 +27,14 @@
         <activity
             android:name=".sample.MenuActivity"
             android:label="@string/menu_resource"
+            android:parentActivityName=".sample.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sample.MainActivity" />
+        </activity>
+        <activity
+            android:name=".sample.PagerActivity"
+            android:label="@string/pager_sheet"
             android:parentActivityName=".sample.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
