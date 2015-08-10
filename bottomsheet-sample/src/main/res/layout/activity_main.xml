@@ -20,4 +20,11 @@
         android:text="@string/menu_resource"
         />
 
+    <Button
+        android:id="@+id/pager_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pager_sheet"
+        />
+
 </LinearLayout>

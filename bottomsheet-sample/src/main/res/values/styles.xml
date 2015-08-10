@@ -7,4 +7,8 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
+    <style name="BottomSheetTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/primary</item>
+    </style>
+
 </resources>
