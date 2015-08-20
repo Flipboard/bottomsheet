@@ -64,6 +64,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     public enum State {
         HIDDEN,
+        PREPARING,
         PEEKED,
         EXPANDED
     }
@@ -601,6 +602,7 @@ public class BottomSheetLayout extends FrameLayout {
         if (state != State.HIDDEN) {
             throw new IllegalStateException("A sheet view is already presented, make sure to dismiss it before showing another.");
         }
+        setState(State.PREPARING);
 
         LayoutParams params = (LayoutParams) sheetView.getLayoutParams();
         if (params == null) {
