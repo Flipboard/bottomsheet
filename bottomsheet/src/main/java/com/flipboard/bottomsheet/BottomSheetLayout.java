@@ -809,4 +809,27 @@ public class BottomSheetLayout extends FrameLayout {
         this.onSheetStateChangeListener = onSheetStateChangeListener;
     }
 
+    /**
+     * Returns whether or not BottomSheetLayout will assume it's being shown on a tablet.
+     *
+     * @param context Context instance to retrieve resources
+     * @return True if BottomSheetLayout will assume it's being shown on a tablet, false if not
+     */
+    public static boolean isTablet(Context context) {
+        return context.getResources().getBoolean(R.bool.bottomsheet_is_tablet);
+    }
+
+    /**
+     * Returns the predicted default width of the sheet if it were shown.
+     *
+     * @param context Context instance to retrieve resources and display metrics
+     * @return Predicted width of the sheet if shown
+     */
+    public static int predictedDefaultWidth(Context context) {
+        if (isTablet(context)) {
+            return context.getResources().getDimensionPixelSize(R.dimen.bottomsheet_default_sheet_width);
+        } else {
+            return context.getResources().getDisplayMetrics().widthPixels;
+        }
+    }
 }
