@@ -30,4 +30,5 @@ dependencies {
     compile project(':bottomsheet')
     compile project(':bottomsheet-commons')
     compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
 }

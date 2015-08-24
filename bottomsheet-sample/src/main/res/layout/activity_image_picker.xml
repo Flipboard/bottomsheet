@@ -1,0 +1,32 @@
+<com.flipboard.bottomsheet.BottomSheetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomsheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        >
+
+        <Button
+            android:id="@+id/image_picker_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginBottom="16dp"
+            android:text="@string/show"
+            />
+
+        <ImageView
+            android:id="@+id/image_picker_selected"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/image_picker_button"
+            />
+
+    </RelativeLayout>
+
+</com.flipboard.bottomsheet.BottomSheetLayout>

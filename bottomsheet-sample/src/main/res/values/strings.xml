@@ -11,4 +11,6 @@
     <string name="upload_photos">Upload photos or videos</string>
     <string name="use_camera">Use camera</string>
     <string name="share_some_text">Share some text!</string>
+    <string name="image_picker">Image picker</string>
+    <string name="show">Show</string>
 </resources>
