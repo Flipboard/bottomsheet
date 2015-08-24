@@ -539,7 +539,7 @@ public class BottomSheetLayout extends FrameLayout {
     /**
      * Set custom height for PEEKED state.
      *
-     * @param peek
+     * @param peek Peek height in pixels
      */
     public void setPeekSheetTranslation(float peek) {
         this.peek = peek;
@@ -578,14 +578,19 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Convenience for showWithSheetView(sheetView, null, null)
+     * Convenience for showWithSheetView(sheetView, null, null).
+     *
+     * @param sheetView The sheet to be presented.
      */
     public void showWithSheetView(View sheetView) {
         showWithSheetView(sheetView, null);
     }
 
     /**
-     * Convenience for showWithSheetView(sheetView, viewTransformer, null)
+     * Convenience for showWithSheetView(sheetView, viewTransformer, null).
+     *
+     * @param sheetView The sheet to be presented.
+     * @param viewTransformer The view transformer to use when presenting the sheet.
      */
     public void showWithSheetView(View sheetView, ViewTransformer viewTransformer) {
         showWithSheetView(sheetView, viewTransformer, null);
@@ -720,6 +725,8 @@ public class BottomSheetLayout extends FrameLayout {
     /**
      * Returns the current peekOnDismiss value, which controls the behavior response to back presses
      * when the current state is {@link State#EXPANDED}.
+     *
+     * @return the current peekOnDismiss value
      */
     public boolean getPeekOnDismiss() {
         return peekOnDismiss;
