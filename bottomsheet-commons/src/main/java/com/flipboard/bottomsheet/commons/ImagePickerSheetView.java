@@ -12,6 +12,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.CheckResult;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -36,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import flipboard.bottomsheet.commons.R;
+
+import static com.flipboard.bottomsheet.commons.ImagePickerSheetView.ImagePickerTile.CAMERA;
+import static com.flipboard.bottomsheet.commons.ImagePickerSheetView.ImagePickerTile.PICKER;
 
 /**
  * A Sheet view for displaying recent images or options to pick or take pictures.
@@ -73,19 +77,32 @@ public class ImagePickerSheetView extends FrameLayout {
      * Backing class for image tiles in the grid.
      */
     public static class ImagePickerTile {
-        protected final Uri imageUri;
-        protected final boolean isCameraPick;
-        protected final boolean isStoragePick;
 
-        ImagePickerTile(Uri imageUri, boolean isCameraPick, boolean isStoragePick) {
+        public static final int IMAGE = 1;
+        public static final int CAMERA = 2;
+        public static final int PICKER = 3;
+        @IntDef({IMAGE, CAMERA, PICKER})
+        public @interface TileType {}
+
+        protected final Uri imageUri;
+        protected final @TileType int tileType;
+
+        ImagePickerTile(@TileType int tileType) {
+            this(null, tileType);
+        }
+
+        ImagePickerTile(@NonNull Uri imageUri) {
+            this(imageUri, IMAGE);
+        }
+
+        protected ImagePickerTile(@Nullable Uri imageUri, @TileType int tileType) {
             this.imageUri = imageUri;
-            this.isCameraPick = isCameraPick;
-            this.isStoragePick = isStoragePick;
+            this.tileType = tileType;
         }
 
         /**
-         * @return The image Uri backing this tile. Can be null if this is a dummy for the camera
-         *         or storage picker items.
+         * @return The image Uri backing this tile. Can be null if this is a placeholder for the
+         *         camera or picker tiles.
          */
         @Nullable
         public Uri getImageUri() {
@@ -93,35 +110,54 @@ public class ImagePickerSheetView extends FrameLayout {
         }
 
         /**
-         * Indicates whether or not this represents the camera pick option. If it is, you should do
+         * @return The {@link TileType} of this tile: either {@link #IMAGE}, {@link #CAMERA}, or
+         *         {@link #PICKER}
+         */
+        @TileType
+        public int getTileType() {
+            return tileType;
+        }
+
+        /**
+         * Indicates whether or not this represents an image tile option. If it is, you can safely
+         * retrieve the represented image's file Uri via {@link #getImageUri()}
+         *
+         * @return True if this is a camera option, false if not.
+         */
+        public boolean isImageTile() {
+            return tileType == IMAGE;
+        }
+
+        /**
+         * Indicates whether or not this represents the camera tile option. If it is, you should do
          * something to facilitate taking a picture, such as firing a camera intent or using your
          * own.
          *
          * @return True if this is a camera option, false if not.
          */
-        public boolean isCameraPick() {
-            return isCameraPick;
+        public boolean isCameraTile() {
+            return tileType == CAMERA;
         }
 
         /**
-         * Indicates whether or not this represents the storage pick option. If it is, you should do
-         * something to facilitate retrieving a picture from storage, such as firing an image pick
-         * intent or retrieving it yourself.
+         * Indicates whether or not this represents the picker tile option. If it is, you should do
+         * something to facilitate retrieving a picture from some other provider, such as firing an
+         * image pick intent or retrieving it yourself.
          *
-         * @return True if this is a storage option, false if not.
+         * @return True if this is a picker tile, false if not.
          */
-        public boolean isStoragePick() {
-            return isStoragePick;
+        public boolean isPickerTile() {
+            return tileType == PICKER;
         }
 
         @Override
         public String toString() {
-            if (imageUri != null) {
-                return imageUri.toString();
-            } else if (isCameraPick) {
-                return "CameraPick";
-            } else if (isStoragePick) {
-                return "StoragePick";
+            if (isImageTile()) {
+                return "ImageTile: " + imageUri;
+            } else if (isCameraTile()) {
+                return "CameraTile";
+            } else if (isPickerTile()) {
+                return "PickerTile";
             } else {
                 return "Invalid item";
             }
@@ -230,10 +266,10 @@ public class ImagePickerSheetView extends FrameLayout {
             inflater = LayoutInflater.from(context);
 
             if (showCameraOption) {
-                tiles.add(new ImagePickerTile(null, true, false));
+                tiles.add(new ImagePickerTile(CAMERA));
             }
             if (showPickerOption) {
-                tiles.add(new ImagePickerTile(null, false, true));
+                tiles.add(new ImagePickerTile(PICKER));
             }
 
             // Add local images, in descending order of date taken
@@ -256,7 +292,7 @@ public class ImagePickerSheetView extends FrameLayout {
                     String imageLocation = cursor.getString(1);
                     File imageFile = new File(imageLocation);
                     if (imageFile.exists()) {
-                        tiles.add(new ImagePickerTile(Uri.fromFile(imageFile), false, false));
+                        tiles.add(new ImagePickerTile(Uri.fromFile(imageFile)));
                     }
                     ++count;
                 }
@@ -298,14 +334,14 @@ public class ImagePickerSheetView extends FrameLayout {
                 imageProvider.onProvideImage(thumb, tile.imageUri, thumbnailSize);
             } else {
                 thumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                if (tile.isCameraPick()) {
+                if (tile.isCameraTile()) {
                     thumb.setBackgroundResource(android.R.color.black);
                     if (cameraDrawable == null) {
                         thumb.setImageResource(R.drawable.bottomsheet_camera);
                     } else {
                         thumb.setImageDrawable(cameraDrawable);
                     }
-                } else if (tile.isStoragePick()) {
+                } else if (tile.isPickerTile()) {
                     thumb.setBackgroundResource(android.R.color.darker_gray);
                     if (pickerDrawable == null) {
                         thumb.setImageResource(R.drawable.bottomsheet_collections);
@@ -339,8 +375,8 @@ public class ImagePickerSheetView extends FrameLayout {
         }
 
         /**
-         * Sets the max number of tiles to show in the image picker. Default is 25 from storage and
-         * the two custom options.
+         * Sets the max number of tiles to show in the image picker. Default is 25 from local
+         * storage and the two custom tiles.
          *
          * @param maxItems Max number of tiles to show
          * @return This builder instance

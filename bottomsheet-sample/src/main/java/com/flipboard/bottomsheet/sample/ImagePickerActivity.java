@@ -111,11 +111,11 @@ public final class ImagePickerActivity extends AppCompatActivity {
                     @Override
                     public void onTileSelected(ImagePickerSheetView.ImagePickerTile selectedTile) {
                         bottomSheetLayout.dismissSheet();
-                        if (selectedTile.isCameraPick()) {
+                        if (selectedTile.isCameraTile()) {
                             dispatchTakePictureIntent();
-                        } else if (selectedTile.isStoragePick()) {
+                        } else if (selectedTile.isPickerTile()) {
                             startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
-                        } else if (selectedTile.getImageUri() != null) {
+                        } else if (selectedTile.isImageTile()) {
                             showSelectedImage(selectedTile.getImageUri());
                         } else {
                             genericError();
