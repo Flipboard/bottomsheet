@@ -217,7 +217,7 @@ public class ImagePickerSheetView extends FrameLayout {
     }
 
     /**
-     * Simple adapter that shows a grid of {@link SquareImageView}s that hold either a thumbnail of
+     * Simple adapter that shows a grid of {@link ImagePickerSheetImageView}s that hold either a thumbnail of
      * the local image or placeholder for camera/picker actions.
      */
     private class Adapter extends BaseAdapter {

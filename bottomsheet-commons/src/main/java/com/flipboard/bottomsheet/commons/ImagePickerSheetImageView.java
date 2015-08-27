@@ -7,23 +7,23 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * An ImageView that keeps a 1:1 aspect ratio
+ * An ImageView that tries to keep a 1:1 aspect ratio
  */
-final class SquareImageView extends ImageView {
-    public SquareImageView(Context context) {
+final class ImagePickerSheetImageView extends ImageView {
+    public ImagePickerSheetImageView(Context context) {
         super(context);
     }
 
-    public SquareImageView(Context context, AttributeSet attrs) {
+    public ImagePickerSheetImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SquareImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ImagePickerSheetImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SquareImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ImagePickerSheetImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
