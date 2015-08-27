@@ -133,6 +133,7 @@ public class ImagePickerSheetView extends FrameLayout {
     protected Adapter adapter;
     protected final int thumbnailSize;
     protected final int spacing;
+    protected final int originalGridPaddingTop;
 
     // Values provided by the builder
     protected int maxItems = 25;
@@ -163,6 +164,7 @@ public class ImagePickerSheetView extends FrameLayout {
 
         // Set up the title
         titleView = (TextView) findViewById(R.id.title);
+        originalGridPaddingTop = tileGrid.getPaddingTop();
         setTitle(builder.title);
 
         // Hook up the remaining builder fields
@@ -195,7 +197,7 @@ public class ImagePickerSheetView extends FrameLayout {
         } else {
             titleView.setVisibility(GONE);
             // Add some padding to the top to account for the missing title
-            tileGrid.setPadding(tileGrid.getPaddingLeft(), tileGrid.getPaddingTop() + spacing, tileGrid.getPaddingRight(), tileGrid.getPaddingBottom());
+            tileGrid.setPadding(tileGrid.getPaddingLeft(), originalGridPaddingTop + spacing, tileGrid.getPaddingRight(), tileGrid.getPaddingBottom());
         }
     }
 
