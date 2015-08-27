@@ -27,9 +27,10 @@ final class SquareImageView extends ImageView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
+    @SuppressWarnings("UnnecessaryLocalVariable")
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+        int bothDimensionsSpec = widthMeasureSpec;
+        super.onMeasure(bothDimensionsSpec, bothDimensionsSpec);
     }
 }
