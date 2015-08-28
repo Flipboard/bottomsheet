@@ -81,13 +81,17 @@ public class ImagePickerSheetView extends FrameLayout {
         public static final int IMAGE = 1;
         public static final int CAMERA = 2;
         public static final int PICKER = 3;
+
         @IntDef({IMAGE, CAMERA, PICKER})
         public @interface TileType {}
+
+        @IntDef({CAMERA, PICKER})
+        public @interface SpecialTileType {}
 
         protected final Uri imageUri;
         protected final @TileType int tileType;
 
-        ImagePickerTile(@TileType int tileType) {
+        ImagePickerTile(@SpecialTileType int tileType) {
             this(null, tileType);
         }
 
