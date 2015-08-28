@@ -36,7 +36,7 @@ public class IntentPickerSheetView extends FrameLayout {
     }
 
     public interface OnIntentPickedListener {
-        void onIntentPicked(Intent intent);
+        void onIntentPicked(ActivityInfo activityInfo);
     }
 
     private class SortAlphabetically implements Comparator<ActivityInfo> {
@@ -60,6 +60,7 @@ public class IntentPickerSheetView extends FrameLayout {
         public final Drawable icon;
         public final String label;
         public final ComponentName componentName;
+        public Object tag;
 
         public ActivityInfo(Drawable icon, String label, Class<?> clazz) {
             this.icon = icon;
@@ -71,6 +72,12 @@ public class IntentPickerSheetView extends FrameLayout {
             this.icon = icon;
             this.label = label.toString();
             this.componentName = componentName;
+        }
+
+        public Intent getConcreteIntent(Intent intent) {
+            Intent concreteIntent = new Intent(intent);
+            concreteIntent.setComponent(componentName);
+            return concreteIntent;
         }
     }
 
@@ -98,9 +105,7 @@ public class IntentPickerSheetView extends FrameLayout {
         appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent concreteIntent = new Intent(intent);
-                concreteIntent.setComponent(adapter.getItem(position).componentName);
-                listener.onIntentPicked(concreteIntent);
+                listener.onIntentPicked(adapter.getItem(position));
             }
         });
 
