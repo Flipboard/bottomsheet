@@ -59,6 +59,7 @@ public class MenuSheetView extends FrameLayout {
     private Adapter adapter;
     private AbsListView absListView;
     private final TextView titleView;
+    protected final int originalListPaddingTop;
 
     /**
      * @param context Context to construct the view with
@@ -97,6 +98,7 @@ public class MenuSheetView extends FrameLayout {
 
         // Set up the title
         titleView = (TextView) findViewById(R.id.title);
+        originalListPaddingTop = absListView.getPaddingTop();
         setTitle(title);
 
         ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
@@ -248,7 +250,7 @@ public class MenuSheetView extends FrameLayout {
             titleView.setVisibility(GONE);
 
             // Add some padding to the top to account for the missing title
-            absListView.setPadding(absListView.getPaddingLeft(), absListView.getPaddingTop() + Util.dp2px(getContext(), 8f), absListView.getPaddingRight(), absListView.getPaddingBottom());
+            absListView.setPadding(absListView.getPaddingLeft(), originalListPaddingTop + Util.dp2px(getContext(), 8f), absListView.getPaddingRight(), absListView.getPaddingBottom());
         }
     }
 
