@@ -190,6 +190,7 @@ public class ImagePickerSheetView extends FrameLayout {
         // Set up the grid
         tileGrid = (GridView) findViewById(R.id.grid);
         spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
+        tileGrid.setDrawSelectorOnTop(true);
         tileGrid.setVerticalSpacing(spacing);
         tileGrid.setHorizontalSpacing(spacing);
         tileGrid.setPadding(spacing, 0, spacing, 0);
@@ -254,7 +255,6 @@ public class ImagePickerSheetView extends FrameLayout {
         float density = getResources().getDisplayMetrics().density;
         final int numColumns = (int) (width / (100 * density));
         thumbnailSize = Math.round((width - ((numColumns - 1) * spacing)) / 3.0f);
-        tileGrid.setDrawSelectorOnTop(true);
         tileGrid.setNumColumns(numColumns);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
