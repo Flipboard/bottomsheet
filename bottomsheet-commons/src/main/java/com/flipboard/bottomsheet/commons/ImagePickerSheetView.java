@@ -30,8 +30,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.flipboard.bottomsheet.BottomSheetLayout;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +169,7 @@ public class ImagePickerSheetView extends FrameLayout {
     protected final TextView titleView;
     protected final GridView tileGrid;
     protected Adapter adapter;
-    protected final int thumbnailSize;
+    protected int thumbnailSize;
     protected final int spacing;
     protected final int originalGridPaddingTop;
 
@@ -190,16 +188,10 @@ public class ImagePickerSheetView extends FrameLayout {
         inflate(getContext(), R.layout.grid_sheet_view, this);
 
         // Set up the grid
-        spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
-        float density = getResources().getDisplayMetrics().density;
-        int futureWidth = BottomSheetLayout.predictedDefaultWidth(getContext());
-        final int numColumns = (int) (futureWidth / (100 * density));
-        thumbnailSize = Math.round((futureWidth - ((numColumns - 1) * spacing)) / 3.0f);
         tileGrid = (GridView) findViewById(R.id.grid);
-        tileGrid.setDrawSelectorOnTop(true);
+        spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
         tileGrid.setVerticalSpacing(spacing);
         tileGrid.setHorizontalSpacing(spacing);
-        tileGrid.setNumColumns(numColumns);
         tileGrid.setPadding(spacing, 0, spacing, 0);
 
         // Set up the title
@@ -254,6 +246,17 @@ public class ImagePickerSheetView extends FrameLayout {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setOutlineProvider(new Util.ShadowOutline(w, h));
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        float density = getResources().getDisplayMetrics().density;
+        final int numColumns = (int) (width / (100 * density));
+        thumbnailSize = Math.round((width - ((numColumns - 1) * spacing)) / 3.0f);
+        tileGrid.setDrawSelectorOnTop(true);
+        tileGrid.setNumColumns(numColumns);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     /**
