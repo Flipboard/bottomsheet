@@ -85,9 +85,9 @@ For more examples, also see the [Recipes](https://github.com/Flipboard/bottomshe
 ##Common Components
 These are located in the optional `bottomsheet-commons` dependency and implement common use cases for bottom sheet.
 
-Intent Picker | Menu Sheet
---- | ---
-![IntentPickerSheetView gif](http://i.imgur.com/wr9HJD1.gif) | ![MenuSheetView gif](http://i.imgur.com/f2j9Y5e.gif)
+Intent Picker | Menu Sheet | ImagePicker Sheet
+--- | --- | ---
+![IntentPickerSheetView gif](http://i.imgur.com/wr9HJD1.gif) | ![MenuSheetView gif](http://i.imgur.com/f2j9Y5e.gif) | ![ImagePickerSheetView gif](https://camo.githubusercontent.com/23a9cf2bf9353a98d1b585e79d06639c7f5297c7/687474703a2f2f692e696d6775722e636f6d2f6f67764b4735692e676966)
 
 ####IntentPickerSheetView
 This component presents an intent chooser in the form of a BottomSheet view. Give it an intent such as a share intent and let the user choose what activity they want to share the intent with in a BottomSheet.
