@@ -611,7 +611,7 @@ public class BottomSheetLayout extends FrameLayout {
 
         LayoutParams params = (LayoutParams) sheetView.getLayoutParams();
         if (params == null) {
-            params = new LayoutParams(isTablet ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, Gravity.CENTER_HORIZONTAL);
+            params = new LayoutParams(isTablet ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
         }
 
         if (isTablet && params.width == FrameLayout.LayoutParams.WRAP_CONTENT) {
