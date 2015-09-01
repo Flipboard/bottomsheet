@@ -40,14 +40,14 @@ public class PickerActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(shareText.getWindowToken(), 0);
 
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                final Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareText.getText().toString());
                 shareIntent.setType("text/plain");
                 IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(PickerActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
                     @Override
-                    public void onIntentPicked(Intent intent) {
+                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
                         bottomSheetLayout.dismissSheet();
-                        startActivity(intent);
+                        startActivity(activityInfo.getConcreteIntent(shareIntent));
                     }
                 });
                 // Filter out built in sharing options such as bluetooth and beam.
