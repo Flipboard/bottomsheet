@@ -7,6 +7,7 @@ import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -352,6 +353,112 @@ public class MenuSheetView extends FrameLayout {
             public void bindView(SheetMenuItem item) {
                 icon.setImageDrawable(item.getMenuItem().getIcon());
                 label.setText(item.getMenuItem().getTitle());
+            }
+        }
+    }
+
+    public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+        private static final int VIEW_TYPE_NORMAL = 0;
+        private static final int VIEW_TYPE_SUBHEADER = 1;
+        private static final int VIEW_TYPE_SEPARATOR = 2;
+
+        private final LayoutInflater inflater;
+
+        public RecyclerAdapter(){
+            this.inflater = LayoutInflater.from(getContext());
+        }
+
+        @Override public int getItemViewType(int position) {
+
+            SheetMenuItem item = getItem(position);
+            if (item.isSeparator()) {
+                return VIEW_TYPE_SEPARATOR;
+            } else if (item.getMenuItem().hasSubMenu()) {
+                return VIEW_TYPE_SUBHEADER;
+            } else {
+                return VIEW_TYPE_NORMAL;
+            }
+        }
+
+        public SheetMenuItem getItem(int position){
+            return items.get(position);
+        }
+
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = null;
+
+            switch (getItemViewType(i)){
+
+                case VIEW_TYPE_NORMAL:
+                    itemView = inflater.inflate(menuType == GRID ? R.layout.sheet_grid_item : R.layout.sheet_list_item, viewGroup, false);
+                    return new NormalViewHolder(itemView);
+
+                case VIEW_TYPE_SUBHEADER:
+                    itemView = inflater.inflate(R.layout.sheet_list_item_subheader, viewGroup, false);
+                    return new SubheaderViewholder(itemView);
+
+                case VIEW_TYPE_SEPARATOR:
+                    itemView = inflater.inflate(R.layout.sheet_list_item_separator, viewGroup, false);
+                    return new SubheaderViewholder(itemView);
+
+            }
+            return null;
+        }
+
+        @Override public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+            SheetMenuItem item = getItem(i);
+
+            switch (getItemViewType(i)){
+
+                case VIEW_TYPE_NORMAL:
+                    ((NormalViewHolder) viewHolder).bindView(item);
+                    break;
+
+                case VIEW_TYPE_SUBHEADER:
+                    ((SubheaderViewholder) viewHolder).bindText(item);
+                    break;
+            }
+
+        }
+
+        @Override public int getItemCount() {
+            return items.size();
+        }
+
+        class NormalViewHolder extends RecyclerView.ViewHolder{
+            final ImageView icon;
+            final TextView label;
+
+            NormalViewHolder(View root) {
+                super(root);
+                icon = (ImageView) root.findViewById(R.id.icon);
+                label = (TextView) root.findViewById(R.id.label);
+            }
+
+            public void bindView(SheetMenuItem item) {
+                icon.setImageDrawable(item.getMenuItem().getIcon());
+                label.setText(item.getMenuItem().getTitle());
+            }
+        }
+
+        class SubheaderViewholder extends RecyclerView.ViewHolder{
+            final View itemView;
+
+            public SubheaderViewholder(View itemView) {
+                super(itemView);
+                this.itemView = itemView;
+
+            }
+
+            public void bindText(SheetMenuItem item){
+                ((TextView)itemView).setText(item.getMenuItem().getTitle());
+            }
+        }
+
+        class SeperatorViewHolder extends RecyclerView.ViewHolder{
+            public SeperatorViewHolder(View itemView) {
+                super(itemView);
             }
         }
     }
