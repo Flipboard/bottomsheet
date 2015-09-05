@@ -42,22 +42,18 @@ public class MenuActivity extends AppCompatActivity {
         findViewById(R.id.recycler_button_grid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMenuSheet(new GridLayoutManager(MenuActivity.this, 3));
+                showMenuSheet(new GridLayoutManager(MenuActivity.this, 3), MenuSheetView.MenuType.RECYCLER_GRID);
             }
         });
         findViewById(R.id.recycler_button_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMenuSheet(new LinearLayoutManager(MenuActivity.this));
+                showMenuSheet(new LinearLayoutManager(MenuActivity.this), MenuSheetView.MenuType.RECYCLER_LIST);
             }
         });
     }
 
     private void showMenuSheet(MenuSheetView.MenuType menuType) {
-        if(menuType == MenuSheetView.MenuType.RECYCLER){
-
-        }
-        else {
             MenuSheetView menuSheetView =
                     new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
                         @Override
@@ -71,11 +67,14 @@ public class MenuActivity extends AppCompatActivity {
                     });
             menuSheetView.inflateMenu(R.menu.create);
             bottomSheetLayout.showWithSheetView(menuSheetView);
-        }
     }
 
-    private void showMenuSheet(RecyclerView.LayoutManager layoutManager){
-        MenuSheetView menuSheetView = new MenuSheetView(MenuActivity.this, layoutManager, "Create...", new MenuSheetView.OnMenuItemClickListener() {
+    /**
+     *
+     * @param layoutManager @link  android.support.v7.widget.RecyclerView.LayoutManager
+     */
+    private void showMenuSheet(RecyclerView.LayoutManager layoutManager, MenuSheetView.MenuType menuType){
+        MenuSheetView menuSheetView = new MenuSheetView(MenuActivity.this, layoutManager, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
