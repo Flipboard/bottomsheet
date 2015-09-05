@@ -31,6 +31,7 @@ import flipboard.bottomsheet.commons.R;
 
 import static com.flipboard.bottomsheet.commons.MenuSheetView.MenuType.GRID;
 import static com.flipboard.bottomsheet.commons.MenuSheetView.MenuType.LIST;
+import static com.flipboard.bottomsheet.commons.MenuSheetView.MenuType.RECYCLER;
 
 /**
  * A SheetView that can represent a menu resource as a list or grid.
@@ -52,13 +53,17 @@ public class MenuSheetView extends FrameLayout {
     /**
      * The supported display types for the menu items.
      */
-    public enum MenuType {LIST, GRID}
+    public enum MenuType {LIST, GRID, RECYCLER}
 
     private Menu menu;
     private final MenuType menuType;
     private ArrayList<SheetMenuItem> items = new ArrayList<>();
     private Adapter adapter;
     private AbsListView absListView;
+    private RecyclerAdapter recyclerAdapter;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private OnMenuItemClickListener listener;
     private final TextView titleView;
     protected final int originalListPaddingTop;
 
@@ -105,6 +110,31 @@ public class MenuSheetView extends FrameLayout {
         ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
     }
 
+    public MenuSheetView(final Context context, final RecyclerView.LayoutManager layoutManager, @Nullable CharSequence title, final OnMenuItemClickListener listener){
+        super(context);
+
+        this.menu = new PopupMenu(context, null).getMenu();
+        this.layoutManager = layoutManager;
+        this.menuType = RECYCLER;
+
+        inflate(context, R.layout.recycler_sheet_view, this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+        recyclerAdapter = new RecyclerAdapter();
+
+        if(listener != null){
+            recyclerAdapter.setListener(listener);
+        }
+
+        // Set up the title
+        titleView = (TextView) findViewById(R.id.title);
+        originalListPaddingTop = recyclerView.getPaddingTop();
+        setTitle(title);
+
+        ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
+    }
+
     /**
      * Inflates a menu resource into the menu backing this sheet.
      *
@@ -122,8 +152,14 @@ public class MenuSheetView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        this.adapter = new Adapter();
-        absListView.setAdapter(this.adapter);
+        if(menuType == RECYCLER){
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(recyclerAdapter);
+        }
+        else {
+            this.adapter = new Adapter();
+            absListView.setAdapter(this.adapter);
+        }
     }
 
     @Override
@@ -364,6 +400,7 @@ public class MenuSheetView extends FrameLayout {
         private static final int VIEW_TYPE_SEPARATOR = 2;
 
         private final LayoutInflater inflater;
+        private OnMenuItemClickListener listener;
 
         public RecyclerAdapter(){
             this.inflater = LayoutInflater.from(getContext());
@@ -385,6 +422,10 @@ public class MenuSheetView extends FrameLayout {
             return items.get(position);
         }
 
+        public void setListener(OnMenuItemClickListener listener){
+            this.listener = listener;
+        }
+
         @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View itemView = null;
 
@@ -400,7 +441,7 @@ public class MenuSheetView extends FrameLayout {
 
                 case VIEW_TYPE_SEPARATOR:
                     itemView = inflater.inflate(R.layout.sheet_list_item_separator, viewGroup, false);
-                    return new SubheaderViewholder(itemView);
+                    return new SeperatorViewHolder(itemView);
 
             }
             return null;
@@ -422,18 +463,32 @@ public class MenuSheetView extends FrameLayout {
 
         }
 
+        public boolean isEnabled(int position) {
+            return getItem(position).isEnabled();
+        }
+
+        public boolean areAllItemsEnabled() {
+            return false;
+        }
+
         @Override public int getItemCount() {
             return items.size();
         }
 
-        class NormalViewHolder extends RecyclerView.ViewHolder{
+        class NormalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             final ImageView icon;
             final TextView label;
 
             NormalViewHolder(View root) {
                 super(root);
+                root.setOnClickListener(this);
                 icon = (ImageView) root.findViewById(R.id.icon);
                 label = (TextView) root.findViewById(R.id.label);
+            }
+
+            @Override
+            public void onClick(View v) {
+                listener.onMenuItemClick(getItem(getAdapterPosition()).getMenuItem());
             }
 
             public void bindView(SheetMenuItem item) {

@@ -13,4 +13,7 @@
     <string name="share_some_text">Share some text!</string>
     <string name="image_picker">Image picker</string>
     <string name="show">Show</string>
+    <string name="recycler">Recycler</string>
+    <string name="recycler_grid">Recycler Grid</string>
+    <string name="recycler_linear">Recycler Linear</string>
 </resources>

@@ -2,6 +2,10 @@ package com.flipboard.bottomsheet.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -35,20 +39,52 @@ public class MenuActivity extends AppCompatActivity {
                 showMenuSheet(MenuSheetView.MenuType.GRID);
             }
         });
+        findViewById(R.id.recycler_button_grid).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMenuSheet(new GridLayoutManager(MenuActivity.this, 3));
+            }
+        });
+        findViewById(R.id.recycler_button_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMenuSheet(new LinearLayoutManager(MenuActivity.this));
+            }
+        });
     }
 
     private void showMenuSheet(MenuSheetView.MenuType menuType) {
-        MenuSheetView menuSheetView =
-                new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
-                        if (bottomSheetLayout.isSheetShowing()) {
-                            bottomSheetLayout.dismissSheet();
+        if(menuType == MenuSheetView.MenuType.RECYCLER){
+
+        }
+        else {
+            MenuSheetView menuSheetView =
+                    new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                            if (bottomSheetLayout.isSheetShowing()) {
+                                bottomSheetLayout.dismissSheet();
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                });
+                    });
+            menuSheetView.inflateMenu(R.menu.create);
+            bottomSheetLayout.showWithSheetView(menuSheetView);
+        }
+    }
+
+    private void showMenuSheet(RecyclerView.LayoutManager layoutManager){
+        MenuSheetView menuSheetView = new MenuSheetView(MenuActivity.this, layoutManager, "Create...", new MenuSheetView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                if (bottomSheetLayout.isSheetShowing()) {
+                    bottomSheetLayout.dismissSheet();
+                }
+                return true;
+            }
+        });
         menuSheetView.inflateMenu(R.menu.create);
         bottomSheetLayout.showWithSheetView(menuSheetView);
     }
