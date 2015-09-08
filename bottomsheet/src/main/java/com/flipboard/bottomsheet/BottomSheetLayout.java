@@ -146,6 +146,7 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+        dimView.setVisibility(INVISIBLE);
 
         peek = 0;//getHeight() return 0 at start!
 
@@ -240,7 +241,11 @@ public class BottomSheetLayout extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
         getSheetView().setTranslationY(getHeight() - sheetTranslation);
         transformView(sheetTranslation);
-        dimView.setAlpha(shouldDimContentView ? getDimAlpha(sheetTranslation) : 0);
+        if (shouldDimContentView) {
+            float dimAlpha = getDimAlpha(sheetTranslation);
+            dimView.setAlpha(dimAlpha);
+            dimView.setVisibility(dimAlpha > 0 ? VISIBLE : INVISIBLE);
+        }
     }
 
     private void transformView(float sheetTranslation) {
@@ -479,6 +484,7 @@ public class BottomSheetLayout extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), getHeight());
         getSheetView().setTranslationY(getHeight());
         dimView.setAlpha(0);
+        dimView.setVisibility(INVISIBLE);
     }
 
     /**
