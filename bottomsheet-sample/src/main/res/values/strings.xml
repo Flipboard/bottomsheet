@@ -13,4 +13,5 @@
     <string name="share_some_text">Share some text!</string>
     <string name="image_picker">Image picker</string>
     <string name="show">Show</string>
+    <string name="reopen">Reopen as other type</string>
 </resources>
