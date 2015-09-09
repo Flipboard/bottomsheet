@@ -442,10 +442,10 @@ public class MenuSheetView extends FrameLayout {
             return getItem(position).hashCode();
         }
 
-        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             View itemView = null;
 
-            switch (getItemViewType(i)){
+            switch (viewType){
 
                 case VIEW_TYPE_NORMAL:
                     itemView = inflater.inflate(menuType == RECYCLER_GRID ? R.layout.sheet_grid_item : R.layout.sheet_list_item, viewGroup, false);
@@ -517,12 +517,9 @@ public class MenuSheetView extends FrameLayout {
         }
 
         class SubheaderViewholder extends RecyclerView.ViewHolder{
-            final View itemView;
 
             public SubheaderViewholder(View itemView) {
                 super(itemView);
-                this.itemView = itemView;
-
             }
 
             public void bindText(SheetMenuItem item){
@@ -533,7 +530,6 @@ public class MenuSheetView extends FrameLayout {
         class SeperatorViewHolder extends RecyclerView.ViewHolder{
             public SeperatorViewHolder(View itemView) {
                 super(itemView);
-                itemView.setEnabled(false);
             }
         }
     }

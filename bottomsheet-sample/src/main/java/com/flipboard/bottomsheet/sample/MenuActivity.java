@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;
 import com.flipboard.bottomsheet.commons.MenuSheetView;
+import com.flipboard.bottomsheet.commons.WrapLinearLayoutManager;
 
 /**
  * Activity demonstrating the use of {@link MenuSheetView}
@@ -48,7 +49,7 @@ public class MenuActivity extends AppCompatActivity {
         findViewById(R.id.recycler_button_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMenuSheet(new LinearLayoutManager(MenuActivity.this), MenuSheetView.MenuType.RECYCLER_LIST);
+                showMenuSheet(new WrapLinearLayoutManager(MenuActivity.this), MenuSheetView.MenuType.RECYCLER_LIST);
             }
         });
     }
@@ -69,10 +70,6 @@ public class MenuActivity extends AppCompatActivity {
             bottomSheetLayout.showWithSheetView(menuSheetView);
     }
 
-    /**
-     *
-     * @param layoutManager @link  android.support.v7.widget.RecyclerView.LayoutManager
-     */
     private void showMenuSheet(RecyclerView.LayoutManager layoutManager, MenuSheetView.MenuType menuType){
         MenuSheetView menuSheetView = new MenuSheetView(MenuActivity.this, layoutManager, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
             @Override
