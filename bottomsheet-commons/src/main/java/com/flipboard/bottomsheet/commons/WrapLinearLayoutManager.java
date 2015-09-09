@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 /**
  * Created by AKiniyalocts on 4/21/15.
  *
- * There is a problem when having a nested recycler view with a dynamic height. i.e. "wrap_content"
+ * There is a problem when having a recycler view with a dynamic height. i.e. "wrap_content"
  * This (99%) fixes that problem.
  */
 public class WrapLinearLayoutManager extends LinearLayoutManager {
