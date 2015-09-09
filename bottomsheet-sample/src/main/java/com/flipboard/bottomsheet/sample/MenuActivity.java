@@ -54,6 +54,7 @@ public class MenuActivity extends AppCompatActivity {
         });
     }
 
+<<<<<<< HEAD
     private void showMenuSheet(MenuSheetView.MenuType menuType) {
             MenuSheetView menuSheetView =
                     new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
@@ -81,6 +82,23 @@ public class MenuActivity extends AppCompatActivity {
                 return true;
             }
         });
+=======
+    private void showMenuSheet(final MenuSheetView.MenuType menuType) {
+        MenuSheetView menuSheetView =
+                new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                        if (bottomSheetLayout.isSheetShowing()) {
+                            bottomSheetLayout.dismissSheet();
+                        }
+                        if (item.getItemId() == R.id.reopen) {
+                            showMenuSheet(menuType == MenuSheetView.MenuType.LIST ? MenuSheetView.MenuType.GRID : MenuSheetView.MenuType.LIST);
+                        }
+                        return true;
+                    }
+                });
+>>>>>>> trunk/master
         menuSheetView.inflateMenu(R.menu.create);
         bottomSheetLayout.showWithSheetView(menuSheetView);
     }

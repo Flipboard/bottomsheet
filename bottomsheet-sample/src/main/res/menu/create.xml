@@ -28,5 +28,10 @@
                 android:title="@string/use_camera"/>
         </menu>
     </item>
+    <item
+        android:id="@+id/reopen"
+        android:title="@string/reopen"
+        android:icon="@mipmap/ic_launcher"
+    />
 
 </menu>

@@ -40,6 +40,7 @@ public class BottomSheetLayout extends FrameLayout {
             object.setSheetTranslation(value);
         }
     };
+    private Runnable runAfterDismiss;
 
     /**
      * Utility class which registers if the animation has been canceled so that subclasses may respond differently in onAnimationEnd
@@ -146,6 +147,7 @@ public class BottomSheetLayout extends FrameLayout {
         dimView = new View(getContext());
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
+        dimView.setVisibility(INVISIBLE);
 
         peek = 0;//getHeight() return 0 at start!
 
@@ -198,6 +200,7 @@ public class BottomSheetLayout extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         velocityTracker.clear();
+        cancelCurrentAnimation();
     }
 
     @Override
@@ -240,7 +243,11 @@ public class BottomSheetLayout extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
         getSheetView().setTranslationY(getHeight() - sheetTranslation);
         transformView(sheetTranslation);
-        dimView.setAlpha(shouldDimContentView ? getDimAlpha(sheetTranslation) : 0);
+        if (shouldDimContentView) {
+            float dimAlpha = getDimAlpha(sheetTranslation);
+            dimView.setAlpha(dimAlpha);
+            dimView.setVisibility(dimAlpha > 0 ? VISIBLE : INVISIBLE);
+        }
     }
 
     private void transformView(float sheetTranslation) {
@@ -479,6 +486,7 @@ public class BottomSheetLayout extends FrameLayout {
         this.contentClipRect.set(0, 0, getWidth(), getHeight());
         getSheetView().setTranslationY(getHeight());
         dimView.setAlpha(0);
+        dimView.setVisibility(INVISIBLE);
     }
 
     /**
@@ -598,14 +606,23 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Present a sheet view to the user.
+     * If another sheet is currently presented, it will be dismissed, and the new sheet will be shown after that
      *
      * @param sheetView The sheet to be presented.
      * @param viewTransformer The view transformer to use when presenting the sheet.
      * @param onSheetDismissedListener The listener to notify when the sheet is dismissed.
      */
-    public void showWithSheetView(View sheetView, ViewTransformer viewTransformer, OnSheetDismissedListener onSheetDismissedListener) {
+    public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer, final OnSheetDismissedListener onSheetDismissedListener) {
         if (state != State.HIDDEN) {
-            throw new IllegalStateException("A sheet view is already presented, make sure to dismiss it before showing another.");
+            Runnable runAfterDismissThis = new Runnable() {
+
+                @Override
+                public void run() {
+                    showWithSheetView(sheetView, viewTransformer, onSheetDismissedListener);
+                }
+            };
+            dismissSheet(runAfterDismissThis);
+            return;
         }
         setState(State.PREPARING);
 
@@ -677,10 +694,17 @@ public class BottomSheetLayout extends FrameLayout {
      * Dismiss the sheet currently being presented.
      */
     public void dismissSheet() {
+        dismissSheet(null);
+    }
+    
+    private void dismissSheet(Runnable runAfterDismissThis) {
         if (state == State.HIDDEN) {
-            // no-op
+            runAfterDismiss = null;
             return;
         }
+        // This must be set every time, including if the parameter is null
+        // Otherwise a new sheet might be shown when the caller called dismiss after a showWithSheet call, which would be 
+        runAfterDismiss = runAfterDismissThis;
         final View sheetView = getSheetView();
         sheetView.removeOnLayoutChangeListener(sheetViewOnLayoutChangeListener);
         cancelCurrentAnimation();
@@ -703,6 +727,10 @@ public class BottomSheetLayout extends FrameLayout {
                     // Remove sheet specific properties
                     viewTransformer = null;
                     onSheetDismissedListener = null;
+                    if (runAfterDismiss != null) {
+                        runAfterDismiss.run();
+                        runAfterDismiss = null;
+                    }
                 }
             }
         });
