@@ -43,35 +43,18 @@ public class MenuActivity extends AppCompatActivity {
         findViewById(R.id.recycler_button_grid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMenuSheet(new GridLayoutManager(MenuActivity.this, 3), MenuSheetView.MenuType.RECYCLER_GRID);
+                showMenuSheet(MenuSheetView.MenuType.RECYCLER_GRID, new GridLayoutManager(MenuActivity.this, 3));
             }
         });
         findViewById(R.id.recycler_button_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMenuSheet(new WrapLinearLayoutManager(MenuActivity.this), MenuSheetView.MenuType.RECYCLER_LIST);
+                showMenuSheet(MenuSheetView.MenuType.RECYCLER_LIST, new WrapLinearLayoutManager(MenuActivity.this));
             }
         });
     }
 
-<<<<<<< HEAD
-    private void showMenuSheet(MenuSheetView.MenuType menuType) {
-            MenuSheetView menuSheetView =
-                    new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            Toast.makeText(MenuActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
-                            if (bottomSheetLayout.isSheetShowing()) {
-                                bottomSheetLayout.dismissSheet();
-                            }
-                            return true;
-                        }
-                    });
-            menuSheetView.inflateMenu(R.menu.create);
-            bottomSheetLayout.showWithSheetView(menuSheetView);
-    }
-
-    private void showMenuSheet(RecyclerView.LayoutManager layoutManager, MenuSheetView.MenuType menuType){
+    private void showMenuSheet( final MenuSheetView.MenuType menuType, RecyclerView.LayoutManager layoutManager) {
         MenuSheetView menuSheetView = new MenuSheetView(MenuActivity.this, layoutManager, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -79,10 +62,17 @@ public class MenuActivity extends AppCompatActivity {
                 if (bottomSheetLayout.isSheetShowing()) {
                     bottomSheetLayout.dismissSheet();
                 }
+                if (item.getItemId() == R.id.reopen) {
+                    showMenuSheet(menuType == MenuSheetView.MenuType.RECYCLER_LIST ? MenuSheetView.MenuType.RECYCLER_GRID : MenuSheetView.MenuType.RECYCLER_LIST,  getOtherLayoutManager(menuType));
+                }
                 return true;
             }
         });
-=======
+
+        menuSheetView.inflateMenu(R.menu.create);
+        bottomSheetLayout.showWithSheetView(menuSheetView);
+    }
+
     private void showMenuSheet(final MenuSheetView.MenuType menuType) {
         MenuSheetView menuSheetView =
                 new MenuSheetView(MenuActivity.this, menuType, "Create...", new MenuSheetView.OnMenuItemClickListener() {
@@ -98,8 +88,12 @@ public class MenuActivity extends AppCompatActivity {
                         return true;
                     }
                 });
->>>>>>> trunk/master
+
         menuSheetView.inflateMenu(R.menu.create);
         bottomSheetLayout.showWithSheetView(menuSheetView);
+    }
+
+    private RecyclerView.LayoutManager getOtherLayoutManager(MenuSheetView.MenuType menuType){
+        return menuType == MenuSheetView.MenuType.RECYCLER_LIST ? new GridLayoutManager(MenuActivity.this, 3) : new WrapLinearLayoutManager(MenuActivity.this);
     }
 }
