@@ -32,6 +32,8 @@ import flipboard.bottomsheet.commons.R;
 @SuppressLint("ViewConstructor")
 public class IntentPickerSheetView extends FrameLayout {
 
+    private int columnWidthDp = 100;
+
     public interface Filter {
         boolean include(ActivityInfo info);
     }
@@ -76,11 +78,11 @@ public class IntentPickerSheetView extends FrameLayout {
         private AsyncTask<Void, Void, Drawable> iconLoadTask;
         public Object tag;
 
-        public ActivityInfo(Drawable icon, String label, Class<?> clazz) {
+        public ActivityInfo(Drawable icon, String label, Context context, Class<?> clazz) {
             this.icon = icon;
             resolveInfo = null;
             this.label = label;
-            this.componentName = new ComponentName(clazz.getPackage().getName(), clazz.getName());
+            this.componentName = new ComponentName(context, clazz.getName());
         }
 
         ActivityInfo(ResolveInfo resolveInfo, CharSequence label, ComponentName componentName) {
@@ -134,6 +136,10 @@ public class IntentPickerSheetView extends FrameLayout {
     public void setFilter(Filter filter) {
         this.filter = filter;
     }
+    
+    public void setColumnWidthDp(int columnWidthDp) {
+        this.columnWidthDp = columnWidthDp;
+    }
 
     /**
      * Adds custom mixins to the resulting picker sheet
@@ -160,7 +166,8 @@ public class IntentPickerSheetView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         final float density = getResources().getDisplayMetrics().density;
-        appGrid.setNumColumns((int) (width / (100 * density)));
+        getResources().getDimensionPixelSize(R.dimen.bottomsheet_default_sheet_width);
+        appGrid.setNumColumns((int) (width / (columnWidthDp * density)));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

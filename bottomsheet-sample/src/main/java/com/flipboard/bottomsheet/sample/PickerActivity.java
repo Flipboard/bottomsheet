@@ -67,7 +67,7 @@ public class PickerActivity extends AppCompatActivity {
 
                 // Add custom mixin example
                 Drawable customDrawable = ResourcesCompat.getDrawable(getResources(), R.mipmap.ic_launcher, null);
-                IntentPickerSheetView.ActivityInfo customInfo = new IntentPickerSheetView.ActivityInfo(customDrawable, "Custom mix-in", MainActivity.class);
+                IntentPickerSheetView.ActivityInfo customInfo = new IntentPickerSheetView.ActivityInfo(customDrawable, "Custom mix-in", PickerActivity.this, MainActivity.class);
                 intentPickerSheet.setMixins(Collections.singletonList(customInfo));
 
                 bottomSheetLayout.showWithSheetView(intentPickerSheet);

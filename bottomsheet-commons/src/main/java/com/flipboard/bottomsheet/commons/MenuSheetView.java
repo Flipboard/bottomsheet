@@ -60,6 +60,7 @@ public class MenuSheetView extends FrameLayout {
     private AbsListView absListView;
     private final TextView titleView;
     protected final int originalListPaddingTop;
+    private int columnWidthDp = 100;
 
     /**
      * @param context Context to construct the view with
@@ -130,7 +131,7 @@ public class MenuSheetView extends FrameLayout {
         if (menuType == GRID) {
             int width = MeasureSpec.getSize(widthMeasureSpec);
             final float density = getResources().getDisplayMetrics().density;
-            ((GridView) absListView).setNumColumns((int) (width / (100 * density)));
+            ((GridView) absListView).setNumColumns((int) (width / (columnWidthDp * density)));
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -242,6 +243,13 @@ public class MenuSheetView extends FrameLayout {
             // Add some padding to the top to account for the missing title
             absListView.setPadding(absListView.getPaddingLeft(), originalListPaddingTop + Util.dp2px(getContext(), 8f), absListView.getPaddingRight(), absListView.getPaddingBottom());
         }
+    }
+
+    /**
+     * Only applies to GRID
+     */
+    public void setColumnWidthDp(int columnWidthDp) {
+        this.columnWidthDp = columnWidthDp;
     }
 
     /**

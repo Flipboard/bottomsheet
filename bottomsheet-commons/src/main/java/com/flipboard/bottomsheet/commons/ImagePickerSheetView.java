@@ -181,6 +181,8 @@ public class ImagePickerSheetView extends FrameLayout {
     protected Drawable cameraDrawable = null;
     protected Drawable pickerDrawable = null;
     protected String title;
+    private int columnWidthDp = 100;
+
 
     protected ImagePickerSheetView(final Builder builder) {
         super(builder.context);
@@ -234,6 +236,10 @@ public class ImagePickerSheetView extends FrameLayout {
         }
     }
 
+    public void setColumnWidthDp(int columnWidthDp) {
+        this.columnWidthDp = columnWidthDp;
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -253,7 +259,7 @@ public class ImagePickerSheetView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         float density = getResources().getDisplayMetrics().density;
-        final int numColumns = (int) (width / (100 * density));
+        final int numColumns = (int) (width / (columnWidthDp * density));
         thumbnailSize = Math.round((width - ((numColumns - 1) * spacing)) / 3.0f);
         tileGrid.setNumColumns(numColumns);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
