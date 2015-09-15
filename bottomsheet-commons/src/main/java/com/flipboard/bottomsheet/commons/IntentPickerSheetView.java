@@ -78,11 +78,11 @@ public class IntentPickerSheetView extends FrameLayout {
         private AsyncTask<Void, Void, Drawable> iconLoadTask;
         public Object tag;
 
-        public ActivityInfo(Drawable icon, String label, Class<?> clazz) {
+        public ActivityInfo(Drawable icon, String label, Context context, Class<?> clazz) {
             this.icon = icon;
             resolveInfo = null;
             this.label = label;
-            this.componentName = new ComponentName(clazz.getPackage().getName(), clazz.getName());
+            this.componentName = new ComponentName(context, clazz.getName());
         }
 
         ActivityInfo(ResolveInfo resolveInfo, CharSequence label, ComponentName componentName) {
