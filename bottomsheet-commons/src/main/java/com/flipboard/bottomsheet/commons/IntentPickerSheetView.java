@@ -98,13 +98,13 @@ public class IntentPickerSheetView extends FrameLayout {
         }
     }
 
-    private final Intent intent;
-    private final GridView appGrid;
-    private final List<ActivityInfo> mixins = new ArrayList<>();
+    protected final Intent intent;
+    protected final GridView appGrid;
+    protected final List<ActivityInfo> mixins = new ArrayList<>();
 
-    private Adapter adapter;
-    private Filter filter = new FilterNone();
-    private Comparator<ActivityInfo> sortMethod = new SortAlphabetically();
+    protected Adapter adapter;
+    protected Filter filter = new FilterNone();
+    protected Comparator<ActivityInfo> sortMethod = new SortAlphabetically();
 
     public IntentPickerSheetView(Context context, Intent intent, @StringRes int titleRes, OnIntentPickedListener listener) {
         this(context, intent, context.getString(titleRes), listener);
