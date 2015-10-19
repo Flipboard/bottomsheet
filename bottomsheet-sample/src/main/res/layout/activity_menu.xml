@@ -27,6 +27,18 @@
             android:text="@string/grid_button"
             />
 
+        <Button
+            android:id="@+id/recycler_button_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recycler_grid"/>
+
+        <Button
+            android:id="@+id/recycler_button_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recycler_linear"/>
+
     </LinearLayout>
 
 </com.flipboard.bottomsheet.BottomSheetLayout>
