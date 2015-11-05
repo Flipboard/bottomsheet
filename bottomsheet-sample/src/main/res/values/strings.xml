@@ -14,4 +14,5 @@
     <string name="image_picker">Image picker</string>
     <string name="show">Show</string>
     <string name="reopen">Reopen as other type</string>
+    <string name="bottomsheet_fragment">BottomSheet Fragment</string>
 </resources>

@@ -45,6 +45,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".sample.MainActivity" />
         </activity>
+        <activity android:name=".sample.BottomSheetFragmentActivity"
+            android:label="@string/bottomsheet_fragment"
+            android:parentActivityName=".sample.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sample.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

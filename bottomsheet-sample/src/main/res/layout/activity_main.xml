@@ -27,4 +27,10 @@
         android:text="@string/image_picker"
         />
 
+    <Button
+        android:id="@+id/bottomsheet_fragment_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bottomsheet_fragment"
+        />
 </LinearLayout>

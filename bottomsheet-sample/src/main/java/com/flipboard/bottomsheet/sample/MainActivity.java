@@ -35,5 +35,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ImagePickerActivity.class));
             }
         });
+
+        findViewById(R.id.bottomsheet_fragment_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BottomSheetFragmentActivity.class));
+            }
+        });
     }
 }
