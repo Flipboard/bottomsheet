@@ -495,7 +495,7 @@ public class BottomSheetLayout extends FrameLayout {
     public void expandSheet() {
         cancelCurrentAnimation();
         setSheetLayerTypeIfEnabled(LAYER_TYPE_NONE);
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, SHEET_TRANSLATION, getHeight());
+        ObjectAnimator anim = ObjectAnimator.ofFloat(this, SHEET_TRANSLATION, getMaxSheetTranslation());
         anim.setDuration(ANIMATION_DURATION);
         anim.setInterpolator(animationInterpolator);
         anim.addListener(new CancelDetectionAnimationListener() {
