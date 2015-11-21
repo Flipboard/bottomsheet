@@ -19,7 +19,7 @@ import com.flipboard.bottomsheet.ViewTransformer;
  * methods.
  * <p>
  * If you don't want to extend from this for your fragment instance, you can use {@link BottomSheetFragmentDelegate}
- * in your fragment implementation instead.
+ * in your fragment implementation instead. You must, however, still implement {@link BottomSheetFragmentInterface}.
  */
 public class BottomSheetFragment extends Fragment implements BottomSheetFragmentInterface {
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.CheckResult;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.AccessFragmentInternals;
@@ -44,8 +45,7 @@ import com.flipboard.bottomsheet.OnSheetDismissedListener;
  * so the instance returned from {@link #create(BottomSheetFragmentInterface)} should be kept
  * until the Activity is destroyed.
  */
-public final class BottomSheetFragmentDelegate implements OnSheetDismissedListener,
-        BottomSheetLayout.OnSheetStateChangeListener {
+public final class BottomSheetFragmentDelegate implements OnSheetDismissedListener {
 
     private static final String SAVED_SHOWS_BOTTOM_SHEET = "bottomsheet:savedBottomSheet";
     private static final String SAVED_BACK_STACK_ID = "bottomsheet:backStackId";
@@ -77,6 +77,12 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         this.fragment = (Fragment) sheetFragmentInterface;
     }
 
+    /**
+     * DialogFragment-like show() method for displaying this the associated sheet fragment
+     *
+     * @param manager FragmentManager instance
+     * @param bottomSheetLayoutId Resource ID of the {@link BottomSheetLayout}
+     */
     public void show(FragmentManager manager, @IdRes int bottomSheetLayoutId) {
         dismissed = false;
         shownByMe = true;
@@ -86,6 +92,13 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
                 .commit();
     }
 
+    /**
+     * DialogFragment-like show() method for displaying this the associated sheet fragment
+     *
+     * @param transaction FragmentTransaction instance
+     * @param bottomSheetLayoutId Resource ID of the {@link BottomSheetLayout}
+     * @return the back stack ID of the fragment after the transaction is committed.
+     */
     public int show(FragmentTransaction transaction, @IdRes int bottomSheetLayoutId) {
         dismissed = false;
         shownByMe = true;
@@ -138,19 +151,32 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         }
     }
 
+    /**
+     * Corresponding onAttach() method
+     *
+     * @param context Context to match the Fragment API, unused.
+     */
     public void onAttach(Context context) {
         if (!shownByMe) {
             dismissed = false;
         }
     }
 
+    /**
+     * Corresponding onDetach() method
+     */
     public void onDetach() {
         if (!shownByMe && !dismissed) {
             dismissed = true;
         }
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+    /**
+     * Corresponding onCreate() method
+     *
+     * @param savedInstanceState Instance state, can be null.
+     */
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         showsBottomSheet = AccessFragmentInternals.getContainerId(fragment) == 0;
 
         if (savedInstanceState != null) {
@@ -160,6 +186,15 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         }
     }
 
+    /**
+     * Retrieves the appropriate layout inflater, either the sheet's or the view's super container. Note that you should
+     * handle the result of this in your getLayoutInflater method.
+     *
+     * @param savedInstanceState Instance state, here to match Fragment API but unused.
+     * @param superInflater The result of the view's inflater, usually the result of super.getLayoutInflater()
+     * @return the layout inflater to use
+     */
+    @CheckResult
     public LayoutInflater getLayoutInflater(Bundle savedInstanceState, LayoutInflater superInflater) {
         if (!showsBottomSheet) {
             return superInflater;
@@ -171,6 +206,9 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         return LayoutInflater.from(fragment.getContext());
     }
 
+    /**
+     * @return this fragment sheet's {@link BottomSheetLayout}.
+     */
     public BottomSheetLayout getBottomSheetLayout() {
         if (bottomSheetLayout == null) {
             bottomSheetLayout = findBottomSheetLayout();
@@ -197,6 +235,11 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         return null;
     }
 
+    /**
+     * Corresponding onActivityCreated() method
+     *
+     * @param savedInstanceState Instance state, here to match the Fragment API but unused
+     */
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         if (!showsBottomSheet) {
             return;
@@ -207,10 +250,12 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
             if (view.getParent() != null) {
                 throw new IllegalStateException("BottomSheetFragment can not be attached to a container view");
             }
-            bottomSheetLayout.setOnSheetStateChangeListener(this);
         }
     }
 
+    /**
+     * Corresponding onStart() method
+     */
     public void onStart() {
         if (bottomSheetLayout != null) {
             viewDestroyed = false;
@@ -218,6 +263,11 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         }
     }
 
+    /**
+     * Corresponding onSaveInstanceState() method
+     *
+     * @param outState The output state, here to match the Fragment API but unused
+     */
     public void onSaveInstanceState(Bundle outState) {
         if (!showsBottomSheet) {
             outState.putBoolean(SAVED_SHOWS_BOTTOM_SHEET, false);
@@ -231,7 +281,7 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
     }
 
     /**
-     * Remove bottom sheet.
+     * Corresponding onDestroyView() method
      */
     public void onDestroyView() {
         if (bottomSheetLayout != null) {
@@ -247,10 +297,5 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
         if (!viewDestroyed) {
             dismissInternal(true);
         }
-    }
-
-    @Override
-    public void onSheetStateChanged(BottomSheetLayout.State state) {
-        // Noop
     }
 }
