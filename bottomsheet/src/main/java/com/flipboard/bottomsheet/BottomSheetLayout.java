@@ -25,6 +25,8 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import java.util.concurrent.CopyOnWriteArraySet;
+
 import flipboard.bottomsheet.R;
 
 public class BottomSheetLayout extends FrameLayout {
@@ -88,11 +90,11 @@ public class BottomSheetLayout extends FrameLayout {
     private float touchSlop;
     private ViewTransformer defaultViewTransformer = new IdentityViewTransformer();
     private ViewTransformer viewTransformer;
-    private OnSheetDismissedListener onSheetDismissedListener;
     private boolean shouldDimContentView = true;
     private boolean useHardwareLayerWhileAnimating = true;
     private Animator currentAnimator;
-    private OnSheetStateChangeListener onSheetStateChangeListener;
+    private CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
+    private CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
     private OnLayoutChangeListener sheetViewOnLayoutChangeListener;
     private View dimView;
     private boolean interceptContentTouch = true;
@@ -469,7 +471,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     private void setState(State state) {
         this.state = state;
-        if (onSheetStateChangeListener != null) {
+        for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
             onSheetStateChangeListener.onSheetStateChanged(state);
         }
     }
@@ -595,30 +597,18 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Convenience for showWithSheetView(sheetView, viewTransformer, null).
-     *
-     * @param sheetView The sheet to be presented.
-     * @param viewTransformer The view transformer to use when presenting the sheet.
-     */
-    public void showWithSheetView(View sheetView, ViewTransformer viewTransformer) {
-        showWithSheetView(sheetView, viewTransformer, null);
-    }
-
-    /**
      * Present a sheet view to the user.
      * If another sheet is currently presented, it will be dismissed, and the new sheet will be shown after that
      *
      * @param sheetView The sheet to be presented.
      * @param viewTransformer The view transformer to use when presenting the sheet.
-     * @param onSheetDismissedListener The listener to notify when the sheet is dismissed.
      */
-    public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer, final OnSheetDismissedListener onSheetDismissedListener) {
+    public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer) {
         if (state != State.HIDDEN) {
             Runnable runAfterDismissThis = new Runnable() {
-
                 @Override
                 public void run() {
-                    showWithSheetView(sheetView, viewTransformer, onSheetDismissedListener);
+                    showWithSheetView(sheetView, viewTransformer);
                 }
             };
             dismissSheet(runAfterDismissThis);
@@ -649,7 +639,6 @@ public class BottomSheetLayout extends FrameLayout {
         super.addView(sheetView, -1, params);
         initializeSheetValues();
         this.viewTransformer = viewTransformer;
-        this.onSheetDismissedListener = onSheetDismissedListener;
 
         // Don't start animating until the sheet has been drawn once. This ensures that we don't do layout while animating and that
         // the drawing cache for the view has been warmed up. tl;dr it reduces lag.
@@ -720,13 +709,14 @@ public class BottomSheetLayout extends FrameLayout {
                     setSheetLayerTypeIfEnabled(LAYER_TYPE_NONE);
                     removeView(sheetView);
 
-                    if (onSheetDismissedListener != null) {
+                    for (OnSheetDismissedListener onSheetDismissedListener : onSheetDismissedListeners) {
                         onSheetDismissedListener.onDismissed(BottomSheetLayout.this);
                     }
 
                     // Remove sheet specific properties
                     viewTransformer = null;
-                    onSheetDismissedListener = null;
+                    onSheetDismissedListeners.clear();
+                    onSheetStateChangeListeners.clear();
                     if (runAfterDismiss != null) {
                         runAfterDismiss.run();
                         runAfterDismiss = null;
@@ -836,12 +826,43 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Set a OnSheetStateChangeListener which will be notified when the state of the presented sheet changes.
+     * Adds an {@link OnSheetStateChangeListener} which will be notified when the state of the presented sheet changes.
      *
      * @param onSheetStateChangeListener the listener to be notified.
      */
-    public void setOnSheetStateChangeListener(OnSheetStateChangeListener onSheetStateChangeListener) {
-        this.onSheetStateChangeListener = onSheetStateChangeListener;
+    public void addOnSheetStateChangeListener(@NonNull OnSheetStateChangeListener onSheetStateChangeListener) {
+        checkNotNull(onSheetStateChangeListener, "onSheetStateChangeListener == null");
+        this.onSheetStateChangeListeners.add(onSheetStateChangeListener);
+    }
+
+    /**
+     * Adds an {@link OnSheetDismissedListener} which will be notified when the state of the presented sheet changes.
+     *
+     * @param onSheetDismissedListener the listener to be notified.
+     */
+    public void addOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
+        checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
+        this.onSheetDismissedListeners.add(onSheetDismissedListener);
+    }
+
+    /**
+     * Removes a previously added {@link OnSheetStateChangeListener}.
+     *
+     * @param onSheetStateChangeListener the listener to be removed.
+     */
+    public void removeOnSheetStateChangeListener(@NonNull OnSheetStateChangeListener onSheetStateChangeListener) {
+        checkNotNull(onSheetStateChangeListener, "onSheetStateChangeListener == null");
+        this.onSheetStateChangeListeners.remove(onSheetStateChangeListener);
+    }
+
+    /**
+     * Removes a previously added {@link OnSheetDismissedListener}.
+     *
+     * @param onSheetDismissedListener the listener to be removed.
+     */
+    public void removeOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
+        checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
+        this.onSheetDismissedListeners.remove(onSheetDismissedListener);
     }
 
     /**
@@ -866,5 +887,12 @@ public class BottomSheetLayout extends FrameLayout {
         } else {
             return context.getResources().getDisplayMetrics().widthPixels;
         }
+    }
+
+    private static <T> T checkNotNull(T value, String message) {
+        if (value == null) {
+            throw new NullPointerException(message);
+        }
+        return value;
     }
 }

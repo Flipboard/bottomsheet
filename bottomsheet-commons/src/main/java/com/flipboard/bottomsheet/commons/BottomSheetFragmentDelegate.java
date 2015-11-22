@@ -259,7 +259,8 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
     public void onStart() {
         if (bottomSheetLayout != null) {
             viewDestroyed = false;
-            bottomSheetLayout.showWithSheetView(fragment.getView(), sheetFragmentInterface.getViewTransformer(), this);
+            bottomSheetLayout.showWithSheetView(fragment.getView(), sheetFragmentInterface.getViewTransformer());
+            bottomSheetLayout.addOnSheetDismissedListener(this);
         }
     }
 
