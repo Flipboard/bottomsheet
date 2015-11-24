@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Property;
 import android.view.Gravity;
@@ -58,10 +59,14 @@ public class BottomSheetLayout extends FrameLayout {
 
     }
 
-    private static class IdentityViewTransformer extends BaseViewTransformer {
+    private class StandardDimAlphaTransformer implements DimAlphaTransformer {
+
+        public static final float MAX_DIM_ALPHA = 0.7f;
+
         @Override
-        public void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view) {
-            // no-op
+        public float getDimAlpha(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view) {
+            float progress = translation / maxTranslation;
+            return progress * MAX_DIM_ALPHA;
         }
     }
 
@@ -88,8 +93,8 @@ public class BottomSheetLayout extends FrameLayout {
     private VelocityTracker velocityTracker;
     private float minFlingVelocity;
     private float touchSlop;
-    private ViewTransformer defaultViewTransformer = new IdentityViewTransformer();
-    private ViewTransformer viewTransformer;
+    private DimAlphaTransformer dimAlphaTransformer = new StandardDimAlphaTransformer();
+    private CopyOnWriteArraySet<ViewTransformer> viewTransformers = new CopyOnWriteArraySet<>();
     private boolean shouldDimContentView = true;
     private boolean useHardwareLayerWhileAnimating = true;
     private Animator currentAnimator;
@@ -253,20 +258,17 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private void transformView(float sheetTranslation) {
-        if (viewTransformer != null) {
+        for (ViewTransformer viewTransformer : viewTransformers) {
             viewTransformer.transformView(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
-        } else if (defaultViewTransformer != null) {
-            defaultViewTransformer.transformView(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
         }
     }
 
     private float getDimAlpha(float sheetTranslation) {
-        if (viewTransformer != null) {
-            return viewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
-        } else if (defaultViewTransformer != null) {
-            return defaultViewTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        if (dimAlphaTransformer != null) {
+            return dimAlphaTransformer.getDimAlpha(sheetTranslation, getMaxSheetTranslation(), getPeekSheetTranslation(), this, getContentView());
+        } else {
+            return 0;
         }
-        return 0;
     }
 
     public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
@@ -588,27 +590,17 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Convenience for showWithSheetView(sheetView, null, null).
-     *
-     * @param sheetView The sheet to be presented.
-     */
-    public void showWithSheetView(View sheetView) {
-        showWithSheetView(sheetView, null);
-    }
-
-    /**
      * Present a sheet view to the user.
      * If another sheet is currently presented, it will be dismissed, and the new sheet will be shown after that
      *
      * @param sheetView The sheet to be presented.
-     * @param viewTransformer The view transformer to use when presenting the sheet.
      */
-    public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer) {
+    public void showWithSheetView(final View sheetView) {
         if (state != State.HIDDEN) {
             Runnable runAfterDismissThis = new Runnable() {
                 @Override
                 public void run() {
-                    showWithSheetView(sheetView, viewTransformer);
+                    showWithSheetView(sheetView);
                 }
             };
             dismissSheet(runAfterDismissThis);
@@ -638,7 +630,6 @@ public class BottomSheetLayout extends FrameLayout {
 
         super.addView(sheetView, -1, params);
         initializeSheetValues();
-        this.viewTransformer = viewTransformer;
 
         // Don't start animating until the sheet has been drawn once. This ensures that we don't do layout while animating and that
         // the drawing cache for the view has been warmed up. tl;dr it reduces lag.
@@ -714,7 +705,10 @@ public class BottomSheetLayout extends FrameLayout {
                     }
 
                     // Remove sheet specific properties
-                    viewTransformer = null;
+                    viewTransformers.clear();
+                    if (!(dimAlphaTransformer instanceof StandardDimAlphaTransformer)) {
+                        dimAlphaTransformer = null;
+                    }
                     onSheetDismissedListeners.clear();
                     onSheetStateChangeListeners.clear();
                     if (runAfterDismiss != null) {
@@ -783,15 +777,39 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Set the default view transformer to use for showing a sheet. Usually applications will use
-     * a similar transformer for most use cases of bottom sheet so this is a convenience instead of
-     * passing a new transformer each time a sheet is shown. This choice is overridden by any
-     * view transformer passed to showWithSheetView().
+     * Adds a {@link ViewTransformer} to be notified during view transformations
      *
-     * @param defaultViewTransformer The view transformer user by default.
+     * @param viewTransformer The view transformer to be added
      */
-    public void setDefaultViewTransformer(ViewTransformer defaultViewTransformer) {
-        this.defaultViewTransformer = defaultViewTransformer;
+    public void addViewTransformer(@NonNull  ViewTransformer viewTransformer) {
+        checkNotNull(viewTransformer, "viewTransformer == null");
+        this.viewTransformers.add(viewTransformer);
+    }
+
+    /**
+     * Removes a previously added {@link ViewTransformer}
+     *
+     * @param viewTransformer The view transformer to be removed
+     */
+    public void removeViewTransformer(@NonNull  ViewTransformer viewTransformer) {
+        checkNotNull(viewTransformer, "viewTransformer == null");
+        this.viewTransformers.remove(viewTransformer);
+    }
+
+    /**
+     * Sets the {@link DimAlphaTransformer} for this view. Can be null to clear the transformer
+     *
+     * @param dimAlphaTransformer The dim alpha transformer
+     */
+    public void setDimAlphaTransformer(@Nullable DimAlphaTransformer dimAlphaTransformer) {
+        this.dimAlphaTransformer = dimAlphaTransformer;
+    }
+
+    /**
+     * Resets the {@link DimAlphaTransformer} of this sheet to its default implementation.
+     */
+    public void resetDimAlphaTransformer() {
+        this.dimAlphaTransformer = new StandardDimAlphaTransformer();
     }
 
     /**
