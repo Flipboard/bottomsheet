@@ -47,7 +47,7 @@ public class BottomSheetLayout extends FrameLayout {
     /**
      * Utility class which registers if the animation has been canceled so that subclasses may respond differently in onAnimationEnd
      */
-    private class CancelDetectionAnimationListener extends AnimatorListenerAdapter {
+    private static class CancelDetectionAnimationListener extends AnimatorListenerAdapter {
 
         protected boolean canceled;
 
@@ -58,7 +58,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     }
 
-    private class IdentityViewTransformer extends BaseViewTransformer {
+    private static class IdentityViewTransformer extends BaseViewTransformer {
         @Override
         public void transformView(float translation, float maxTranslation, float peekedTranslation, BottomSheetLayout parent, View view) {
             // no-op
