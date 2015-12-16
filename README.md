@@ -11,6 +11,10 @@ BottomSheet has been used in production at Flipboard for a while now so it is th
 ##Installation
 If all you want is the BottomSheet component and don't need things from commons you can skip that dependency.
 ```groovy
+repositories {
+    jcenter()
+}
+
 dependencies {
     compile 'com.flipboard:bottomsheet-core:1.5.0'
     compile 'com.flipboard:bottomsheet-commons:1.5.0' // optional
