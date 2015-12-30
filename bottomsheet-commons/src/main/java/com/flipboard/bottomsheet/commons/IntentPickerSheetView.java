@@ -100,6 +100,7 @@ public class IntentPickerSheetView extends FrameLayout {
 
     protected final Intent intent;
     protected final GridView appGrid;
+    protected final TextView titleView;
     protected final List<ActivityInfo> mixins = new ArrayList<>();
 
     protected Adapter adapter;
@@ -116,7 +117,7 @@ public class IntentPickerSheetView extends FrameLayout {
 
         inflate(context, R.layout.grid_sheet_view, this);
         appGrid = (GridView) findViewById(R.id.grid);
-        TextView titleView = (TextView) findViewById(R.id.title);
+        titleView = (TextView) findViewById(R.id.title);
 
         titleView.setText(title);
         appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
