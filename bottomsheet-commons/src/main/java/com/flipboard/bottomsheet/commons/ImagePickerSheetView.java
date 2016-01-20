@@ -381,8 +381,8 @@ public class ImagePickerSheetView extends FrameLayout {
         Drawable pickerDrawable = null;
 
         public Builder(@NonNull Context context) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-                    || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 throw new RuntimeException("Missing required READ_EXTERNAL_STORAGE permission. Did you remember to request it first?");
             }
             this.context = context;
