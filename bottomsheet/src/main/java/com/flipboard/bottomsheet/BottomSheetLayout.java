@@ -528,6 +528,10 @@ public class BottomSheetLayout extends FrameLayout {
      * Set the presented sheet to be in a peeked state.
      */
     public void peekSheet() {
+        if (getSheetView().getMeasuredHeight() < BottomSheetLayout.this.getMeasuredHeight()) {
+            expandSheet();
+            return;
+        }
         cancelCurrentAnimation();
         setSheetLayerTypeIfEnabled(LAYER_TYPE_HARDWARE);
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, SHEET_TRANSLATION, getPeekSheetTranslation());
@@ -685,11 +689,7 @@ public class BottomSheetLayout extends FrameLayout {
                         // Make sure sheet view is still here when first draw happens.
                         // In the case of a large lag it could be that the view is dismissed before it is drawn resulting in sheet view being null here.
                         if (getSheetView() != null) {
-                            if (sheetView.getMeasuredHeight() >= BottomSheetLayout.this.getMeasuredHeight()) {
-                                peekSheet();
-                            } else {
-                                expandSheet();
-                            }
+                            peekSheet();
                         }
                     }
                 });
