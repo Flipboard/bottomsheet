@@ -101,24 +101,35 @@ public class BottomSheetLayout extends FrameLayout {
     private int currentSheetViewHeight;
     private boolean hasIntercepted;
     private float peek;
+    private float elasticLimit;
 
-    /** Some values we need to manage width on tablets */
+    /**
+     * Some values we need to manage width on tablets
+     */
     private int screenWidth = 0;
     private final boolean isTablet = getResources().getBoolean(R.bool.bottomsheet_is_tablet);
     private final int defaultSheetWidth = getResources().getDimensionPixelSize(R.dimen.bottomsheet_default_sheet_width);
     private int sheetStartX = 0;
     private int sheetEndX = 0;
 
-    /** Snapshot of the touch's y position on a down event */
+    /**
+     * Snapshot of the touch's y position on a down event
+     */
     private float downY;
 
-    /** Snapshot of the touch's x position on a down event */
+    /**
+     * Snapshot of the touch's x position on a down event
+     */
     private float downX;
 
-    /** Snapshot of the sheet's translation at the time of the last down event */
+    /**
+     * Snapshot of the sheet's translation at the time of the last down event
+     */
     private float downSheetTranslation;
 
-    /** Snapshot of the sheet's state at the time of the last down event */
+    /**
+     * Snapshot of the sheet's state at the time of the last down event
+     */
     private State downState;
 
     public BottomSheetLayout(Context context) {
@@ -394,7 +405,7 @@ public class BottomSheetLayout extends FrameLayout {
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (newSheetTranslation < peekSheetTranslation) {
+                    if (newSheetTranslation + getElasticLimit() < peekSheetTranslation) {
                         dismissSheet();
                     } else {
                         // If touch is released, go to a new state depending on velocity.
@@ -482,7 +493,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Set dim and translation to the initial state
-     * */
+     */
     private void initializeSheetValues() {
         this.sheetTranslation = 0;
         this.contentClipRect.set(0, 0, getWidth(), getHeight());
@@ -534,6 +545,28 @@ public class BottomSheetLayout extends FrameLayout {
         currentAnimator = anim;
         setState(State.PEEKED);
     }
+
+    /**
+     * @return The limit offset to avoid dismiss on pulling Sheet.
+     */
+    public float getElasticLimit() {
+        return elasticLimit == 0 ? getDefaultElasticLimit() : elasticLimit;
+    }
+
+    private float getDefaultElasticLimit() {
+        elasticLimit = hasFullHeightSheet() ? getHeight() / 10 : getSheetView().getHeight() / 10;
+        return elasticLimit;
+    }
+
+    /**
+     * Set custom height for PEEKED state.
+     *
+     * @param elasticLimit Elastic limit offset in pixels
+     */
+    public void setElasticLimit(float elasticLimit) {
+        this.elasticLimit = elasticLimit < 0 ? getDefaultElasticLimit() : elasticLimit;
+    }
+
 
     /**
      * @return The peeked state translation for the presented sheet view. Translation is counted from the bottom of the view.
@@ -600,7 +633,7 @@ public class BottomSheetLayout extends FrameLayout {
      * Present a sheet view to the user.
      * If another sheet is currently presented, it will be dismissed, and the new sheet will be shown after that
      *
-     * @param sheetView The sheet to be presented.
+     * @param sheetView       The sheet to be presented.
      * @param viewTransformer The view transformer to use when presenting the sheet.
      */
     public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer) {
@@ -652,7 +685,11 @@ public class BottomSheetLayout extends FrameLayout {
                         // Make sure sheet view is still here when first draw happens.
                         // In the case of a large lag it could be that the view is dismissed before it is drawn resulting in sheet view being null here.
                         if (getSheetView() != null) {
-                            peekSheet();
+                            if (sheetView.getMeasuredHeight() >= BottomSheetLayout.this.getMeasuredHeight()) {
+                                peekSheet();
+                            } else {
+                                expandSheet();
+                            }
                         }
                     }
                 });
@@ -685,7 +722,7 @@ public class BottomSheetLayout extends FrameLayout {
     public void dismissSheet() {
         dismissSheet(null);
     }
-    
+
     private void dismissSheet(Runnable runAfterDismissThis) {
         if (state == State.HIDDEN) {
             runAfterDismiss = null;
