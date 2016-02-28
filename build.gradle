@@ -58,3 +58,8 @@ def String version() {
 
     return versionProps['major'] + "." + versionProps['minor'] + "." + versionProps['patch']
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
