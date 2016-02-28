@@ -7,10 +7,11 @@ import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.view.SupportMenuInflater;
+import android.support.v7.view.menu.MenuBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
@@ -21,7 +22,6 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class MenuSheetView extends FrameLayout {
         super(context);
 
         // Set up the menu
-        this.menu = new PopupMenu(context, null).getMenu();  // Dirty hack to get a menu instance since MenuBuilder isn't public ಠ_ಠ
+        this.menu = new MenuBuilder(context);
         this.menuType = menuType;
 
         // Inflate the appropriate view and set up the absListView
@@ -112,7 +112,7 @@ public class MenuSheetView extends FrameLayout {
      */
     public void inflateMenu(@MenuRes int menuRes) {
         if (menuRes != -1) {
-            MenuInflater inflater = new MenuInflater(getContext());
+            SupportMenuInflater inflater = new SupportMenuInflater(getContext());
             inflater.inflate(menuRes, menu);
         }
 
