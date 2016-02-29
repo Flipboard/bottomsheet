@@ -70,7 +70,8 @@ public class PickerActivity extends AppCompatActivity {
                 IntentPickerSheetView.ActivityInfo customInfo = new IntentPickerSheetView.ActivityInfo(customDrawable, "Custom mix-in", PickerActivity.this, MainActivity.class);
                 intentPickerSheet.setMixins(Collections.singletonList(customInfo));
 
-                bottomSheetLayout.showWithSheetView(intentPickerSheet);
+                bottomSheetLayout.with(intentPickerSheet)
+                        .show();
             }
         });
     }

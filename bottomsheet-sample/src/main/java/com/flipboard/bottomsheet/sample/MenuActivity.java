@@ -22,7 +22,6 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
-        bottomSheetLayout.setPeekOnDismiss(true);
         findViewById(R.id.list_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +52,8 @@ public class MenuActivity extends AppCompatActivity {
                     }
                 });
         menuSheetView.inflateMenu(R.menu.create);
-        bottomSheetLayout.showWithSheetView(menuSheetView);
+        bottomSheetLayout.with(menuSheetView)
+                .setPeekOnDismiss(true)
+                .show();
     }
 }

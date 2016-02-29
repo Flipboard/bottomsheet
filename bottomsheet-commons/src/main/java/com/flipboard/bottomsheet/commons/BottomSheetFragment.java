@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.ViewTransformer;
 
 /**
  * A fragment that shows itself in a {@link BottomSheetLayout}. Like a {@link
@@ -57,14 +56,6 @@ public class BottomSheetFragment extends Fragment implements BottomSheetFragment
     @Override
     public void dismissAllowingStateLoss() {
         getDelegate().dismissAllowingStateLoss();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ViewTransformer getViewTransformer() {
-        return null;
     }
 
     @Override

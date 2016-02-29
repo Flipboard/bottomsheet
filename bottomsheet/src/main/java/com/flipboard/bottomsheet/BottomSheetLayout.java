@@ -10,12 +10,14 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Property;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -59,7 +61,7 @@ public class BottomSheetLayout extends FrameLayout {
 
     }
 
-    private class StandardDimAlphaTransformer implements DimAlphaTransformer {
+    private static class StandardDimAlphaTransformer implements DimAlphaTransformer {
 
         public static final float MAX_DIM_ALPHA = 0.7f;
 
@@ -83,29 +85,31 @@ public class BottomSheetLayout extends FrameLayout {
 
     private static final long ANIMATION_DURATION = 300;
 
-    private Rect contentClipRect = new Rect();
+    private final Rect contentClipRect = new Rect();
+    private final TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     private State state = State.HIDDEN;
-    private boolean peekOnDismiss = false;
-    private TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     public boolean bottomSheetOwnsTouch;
     private boolean sheetViewOwnsTouch;
     private float sheetTranslation;
     private VelocityTracker velocityTracker;
     private float minFlingVelocity;
     private float touchSlop;
+    private Animator currentAnimator;
+    private OnLayoutChangeListener sheetViewOnLayoutChangeListener;
+    private View dimView;
+    private int currentSheetViewHeight;
+    private boolean hasIntercepted;
+
+    /** Configurable fields */
+    private CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
+    private CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
     private DimAlphaTransformer dimAlphaTransformer = new StandardDimAlphaTransformer();
     private CopyOnWriteArraySet<ViewTransformer> viewTransformers = new CopyOnWriteArraySet<>();
     private boolean shouldDimContentView = true;
     private boolean useHardwareLayerWhileAnimating = true;
-    private Animator currentAnimator;
-    private CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
-    private CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
-    private OnLayoutChangeListener sheetViewOnLayoutChangeListener;
-    private View dimView;
+    private boolean peekOnDismiss = false;
+    private float peekSheetTranslation = 0;
     private boolean interceptContentTouch = true;
-    private int currentSheetViewHeight;
-    private boolean hasIntercepted;
-    private float peek;
 
     /** Some values we need to manage width on tablets */
     private int screenWidth = 0;
@@ -155,8 +159,6 @@ public class BottomSheetLayout extends FrameLayout {
         dimView.setBackgroundColor(Color.BLACK);
         dimView.setAlpha(0);
         dimView.setVisibility(INVISIBLE);
-
-        peek = 0;//getHeight() return 0 at start!
 
         setFocusableInTouchMode(true);
 
@@ -541,7 +543,7 @@ public class BottomSheetLayout extends FrameLayout {
      * @return The peeked state translation for the presented sheet view. Translation is counted from the bottom of the view.
      */
     public float getPeekSheetTranslation() {
-        return peek == 0 ? getDefaultPeekTranslation() : peek;
+        return peekSheetTranslation == 0 ? getDefaultPeekTranslation() : peekSheetTranslation;
     }
 
     private float getDefaultPeekTranslation() {
@@ -554,7 +556,7 @@ public class BottomSheetLayout extends FrameLayout {
      * @param peek Peek height in pixels
      */
     public void setPeekSheetTranslation(float peek) {
-        this.peek = peek;
+        this.peekSheetTranslation = peek;
     }
 
     /**
@@ -589,18 +591,20 @@ public class BottomSheetLayout extends FrameLayout {
         super.addView(dimView, -1, generateDefaultLayoutParams());
     }
 
-    /**
-     * Present a sheet view to the user.
-     * If another sheet is currently presented, it will be dismissed, and the new sheet will be shown after that
-     *
-     * @param sheetView The sheet to be presented.
-     */
-    public void showWithSheetView(final View sheetView) {
+    public Builder with(@LayoutRes int layoutResId) {
+        return with(LayoutInflater.from(getContext()).inflate(layoutResId, this, false));
+    }
+
+    public Builder with(@NonNull View view) {
+        return new Builder(view);
+    }
+
+    private void showWithBuilder(final Builder builder) {
         if (state != State.HIDDEN) {
             Runnable runAfterDismissThis = new Runnable() {
                 @Override
                 public void run() {
-                    showWithSheetView(sheetView);
+                    showWithBuilder(builder);
                 }
             };
             dismissSheet(runAfterDismissThis);
@@ -608,6 +612,17 @@ public class BottomSheetLayout extends FrameLayout {
         }
         setState(State.PREPARING);
 
+        View sheetView = builder.sheetView;
+        onSheetStateChangeListeners.addAll(builder.onSheetStateChangeListeners);
+        onSheetDismissedListeners.addAll(builder.onSheetDismissedListeners);
+        viewTransformers.addAll(builder.viewTransformers);
+        dimAlphaTransformer = builder.dimAlphaTransformer;
+        setShouldDimContentView(builder.shouldDimContentView);
+        setUseHardwareLayerWhileAnimating(builder.useHardwareLayerWhileAnimating);
+        setPeekOnDismiss(builder.peekOnDismiss);
+        setPeekSheetTranslation(builder.peekSheetTranslation);
+        setInterceptContentTouch(builder.interceptContentTouch);
+        final State initialState = builder.initialState;
         LayoutParams params = (LayoutParams) sheetView.getLayoutParams();
         if (params == null) {
             params = new LayoutParams(isTablet ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
@@ -643,7 +658,11 @@ public class BottomSheetLayout extends FrameLayout {
                         // Make sure sheet view is still here when first draw happens.
                         // In the case of a large lag it could be that the view is dismissed before it is drawn resulting in sheet view being null here.
                         if (getSheetView() != null) {
-                            peekSheet();
+                            if (initialState == State.PEEKED) {
+                                peekSheet();
+                            } else {
+                                expandSheet();
+                            }
                         }
                     }
                 });
@@ -677,7 +696,7 @@ public class BottomSheetLayout extends FrameLayout {
         dismissSheet(null);
     }
     
-    private void dismissSheet(Runnable runAfterDismissThis) {
+    private void dismissSheet(@Nullable Runnable runAfterDismissThis) {
         if (state == State.HIDDEN) {
             runAfterDismiss = null;
             return;
@@ -912,5 +931,81 @@ public class BottomSheetLayout extends FrameLayout {
             throw new NullPointerException(message);
         }
         return value;
+    }
+
+    public class Builder {
+        protected CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
+        protected CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
+        protected CopyOnWriteArraySet<ViewTransformer> viewTransformers = new CopyOnWriteArraySet<>();
+        protected DimAlphaTransformer dimAlphaTransformer = new StandardDimAlphaTransformer();
+        protected boolean shouldDimContentView = true;
+        protected boolean useHardwareLayerWhileAnimating = true;
+        protected boolean peekOnDismiss = false;
+        protected View sheetView = null;
+        protected float peekSheetTranslation = 0;
+        protected boolean interceptContentTouch = true;
+        protected State initialState = State.PEEKED;
+
+        private Builder(@NonNull View sheetView) {
+            checkNotNull(sheetView, "sheetView == null");
+            this.sheetView = sheetView;
+        }
+
+        public Builder addOnSheetStateChangeListener(@NonNull OnSheetStateChangeListener onSheetStateChangeListener) {
+            checkNotNull(onSheetStateChangeListener, "onSheetStateChangeListener == null");
+            this.onSheetStateChangeListeners.add(onSheetStateChangeListener);
+            return this;
+        }
+
+        public Builder addOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
+            checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
+            this.onSheetDismissedListeners.add(onSheetDismissedListener);
+            return this;
+        }
+
+        public Builder addViewTransformer(@NonNull ViewTransformer viewTransformer) {
+            checkNotNull(viewTransformer, "viewTransformer == null");
+            this.viewTransformers.add(viewTransformer);
+            return this;
+        }
+
+        public Builder setDimAlphaTransformer(@Nullable DimAlphaTransformer dimAlphaTransformer) {
+            this.dimAlphaTransformer = dimAlphaTransformer;
+            return this;
+        }
+
+        public Builder setShouldDimContentView(boolean shouldDimContentView) {
+            this.shouldDimContentView = shouldDimContentView;
+            return this;
+        }
+
+        public Builder setUseHardwareLayerWhileAnimating(boolean useHardwareLayerWhileAnimating) {
+            this.useHardwareLayerWhileAnimating = useHardwareLayerWhileAnimating;
+            return this;
+        }
+
+        public Builder setPeekOnDismiss(boolean peekOnDismiss) {
+            this.peekOnDismiss = peekOnDismiss;
+            return this;
+        }
+
+        public Builder setPeekSheetTranslation(float peekSheetTranslation) {
+            this.peekSheetTranslation = peekSheetTranslation;
+            return this;
+        }
+
+        public Builder setInterceptContentTouch(boolean interceptContentTouch) {
+            this.interceptContentTouch = interceptContentTouch;
+            return this;
+        }
+
+        public Builder setInitialState(State initialState) {
+            this.initialState = initialState;
+            return this;
+        }
+
+        public void show() {
+            showWithBuilder(this);
+        }
     }
 }

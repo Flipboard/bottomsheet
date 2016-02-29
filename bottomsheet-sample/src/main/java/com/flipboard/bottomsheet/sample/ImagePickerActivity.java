@@ -46,7 +46,6 @@ public final class ImagePickerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_picker);
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
-        bottomSheetLayout.setPeekOnDismiss(true);
         selectedImage = (ImageView) findViewById(R.id.image_picker_selected);
         findViewById(R.id.image_picker_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +124,9 @@ public final class ImagePickerActivity extends AppCompatActivity {
                 .setTitle("Choose an image...")
                 .create();
 
-        bottomSheetLayout.showWithSheetView(sheetView);
+        bottomSheetLayout.with(sheetView)
+                .setPeekOnDismiss(true)
+                .show();
     }
 
     /**
