@@ -79,10 +79,6 @@ public class BottomSheetLayout extends FrameLayout {
         EXPANDED
     }
 
-    public interface OnSheetStateChangeListener {
-        void onSheetStateChanged(State state);
-    }
-
     private static final long ANIMATION_DURATION = 300;
 
     private final Rect contentClipRect = new Rect();
@@ -102,7 +98,6 @@ public class BottomSheetLayout extends FrameLayout {
 
     /** Configurable fields */
     private CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
-    private CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
     private DimAlphaTransformer dimAlphaTransformer = new StandardDimAlphaTransformer();
     private CopyOnWriteArraySet<ViewTransformer> viewTransformers = new CopyOnWriteArraySet<>();
     private boolean shouldDimContentView = true;
@@ -614,7 +609,6 @@ public class BottomSheetLayout extends FrameLayout {
 
         View sheetView = builder.sheetView;
         onSheetStateChangeListeners.addAll(builder.onSheetStateChangeListeners);
-        onSheetDismissedListeners.addAll(builder.onSheetDismissedListeners);
         viewTransformers.addAll(builder.viewTransformers);
         dimAlphaTransformer = builder.dimAlphaTransformer;
         setShouldDimContentView(builder.shouldDimContentView);
@@ -719,16 +713,11 @@ public class BottomSheetLayout extends FrameLayout {
                     setSheetLayerTypeIfEnabled(LAYER_TYPE_NONE);
                     removeView(sheetView);
 
-                    for (OnSheetDismissedListener onSheetDismissedListener : onSheetDismissedListeners) {
-                        onSheetDismissedListener.onDismissed(BottomSheetLayout.this);
-                    }
-
                     // Remove sheet specific properties
                     viewTransformers.clear();
                     if (!(dimAlphaTransformer instanceof StandardDimAlphaTransformer)) {
                         dimAlphaTransformer = null;
                     }
-                    onSheetDismissedListeners.clear();
                     onSheetStateChangeListeners.clear();
                     if (runAfterDismiss != null) {
                         runAfterDismiss.run();
@@ -873,16 +862,6 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     /**
-     * Adds an {@link OnSheetDismissedListener} which will be notified when the state of the presented sheet changes.
-     *
-     * @param onSheetDismissedListener the listener to be notified.
-     */
-    public void addOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
-        checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
-        this.onSheetDismissedListeners.add(onSheetDismissedListener);
-    }
-
-    /**
      * Removes a previously added {@link OnSheetStateChangeListener}.
      *
      * @param onSheetStateChangeListener the listener to be removed.
@@ -890,16 +869,6 @@ public class BottomSheetLayout extends FrameLayout {
     public void removeOnSheetStateChangeListener(@NonNull OnSheetStateChangeListener onSheetStateChangeListener) {
         checkNotNull(onSheetStateChangeListener, "onSheetStateChangeListener == null");
         this.onSheetStateChangeListeners.remove(onSheetStateChangeListener);
-    }
-
-    /**
-     * Removes a previously added {@link OnSheetDismissedListener}.
-     *
-     * @param onSheetDismissedListener the listener to be removed.
-     */
-    public void removeOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
-        checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
-        this.onSheetDismissedListeners.remove(onSheetDismissedListener);
     }
 
     /**
@@ -935,7 +904,6 @@ public class BottomSheetLayout extends FrameLayout {
 
     public class Builder {
         protected CopyOnWriteArraySet<OnSheetStateChangeListener> onSheetStateChangeListeners = new CopyOnWriteArraySet<>();
-        protected CopyOnWriteArraySet<OnSheetDismissedListener> onSheetDismissedListeners = new CopyOnWriteArraySet<>();
         protected CopyOnWriteArraySet<ViewTransformer> viewTransformers = new CopyOnWriteArraySet<>();
         protected DimAlphaTransformer dimAlphaTransformer = new StandardDimAlphaTransformer();
         protected boolean shouldDimContentView = true;
@@ -954,12 +922,6 @@ public class BottomSheetLayout extends FrameLayout {
         public Builder addOnSheetStateChangeListener(@NonNull OnSheetStateChangeListener onSheetStateChangeListener) {
             checkNotNull(onSheetStateChangeListener, "onSheetStateChangeListener == null");
             this.onSheetStateChangeListeners.add(onSheetStateChangeListener);
-            return this;
-        }
-
-        public Builder addOnSheetDismissedListener(@NonNull OnSheetDismissedListener onSheetDismissedListener) {
-            checkNotNull(onSheetDismissedListener, "onSheetDismissedListener == null");
-            this.onSheetDismissedListeners.add(onSheetDismissedListener);
             return this;
         }
 

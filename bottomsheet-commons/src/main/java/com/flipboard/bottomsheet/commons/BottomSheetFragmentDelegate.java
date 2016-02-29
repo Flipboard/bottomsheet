@@ -3,7 +3,6 @@ package com.flipboard.bottomsheet.commons;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -15,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.OnSheetDismissedListener;
+import com.flipboard.bottomsheet.OnSheetStateChangeListener;
 
 /**
  * This class represents a delegate which you can use to extend BottomSheet's fragment support to any
@@ -45,7 +44,7 @@ import com.flipboard.bottomsheet.OnSheetDismissedListener;
  * so the instance returned from {@link #create(BottomSheetFragmentInterface)} should be kept
  * until the Activity is destroyed.
  */
-public final class BottomSheetFragmentDelegate implements OnSheetDismissedListener {
+public final class BottomSheetFragmentDelegate implements OnSheetStateChangeListener {
 
     private static final String SAVED_SHOWS_BOTTOM_SHEET = "bottomsheet:savedBottomSheet";
     private static final String SAVED_BACK_STACK_ID = "bottomsheet:backStackId";
@@ -60,7 +59,6 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
     private boolean showsBottomSheet = true;
     private int backStackId = -1;
 
-    private BottomSheetFragmentInterface sheetFragmentInterface;
     private Fragment fragment;
 
     public static BottomSheetFragmentDelegate create(BottomSheetFragmentInterface sheetFragmentInterface) {
@@ -73,7 +71,6 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
             throw new IllegalArgumentException("sheetFragmentInterface must be an instance of a Fragment too!");
         }
 
-        this.sheetFragmentInterface = sheetFragmentInterface;
         this.fragment = (Fragment) sheetFragmentInterface;
     }
 
@@ -262,7 +259,7 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
             View view = fragment.getView();
             if (view != null) {
                 bottomSheetLayout.with(fragment.getView()).show();
-                bottomSheetLayout.addOnSheetDismissedListener(this);
+                bottomSheetLayout.addOnSheetStateChangeListener(this);
             }
         }
     }
@@ -296,10 +293,11 @@ public final class BottomSheetFragmentDelegate implements OnSheetDismissedListen
     }
 
     @Override
-    @CallSuper
-    public void onDismissed(BottomSheetLayout bottomSheetLayout) {
-        if (!viewDestroyed) {
-            dismissInternal(true);
+    public void onSheetStateChanged(BottomSheetLayout.State state) {
+        if (state == BottomSheetLayout.State.HIDDEN) {
+            if (!viewDestroyed) {
+                dismissInternal(true);
+            }
         }
     }
 }
