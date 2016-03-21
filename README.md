@@ -75,11 +75,11 @@ You could also use one of the sheet views from the commons module.
 ```java
 bottomSheet.showWithSheetView(new IntentPickerSheetView(this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
 	@Override
-	public void onIntentPicked(Intent intent) {
-		bottomSheet.dismissSheet();
-		startActivity(intent);
+	public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
+        bottomSheet.dismissSheet();
+		startActivity(activityInfo.getConcreteIntent(shareIntent));
 	}
-});
+}));
 ```
 
 That's it for the simplest of use cases. Check out the [API documentation](https://github.com/Flipboard/bottomsheet/wiki/API-Documentation) to find out how to customize BottomSheet to fit your use cases.
@@ -100,11 +100,11 @@ Example from the sample app.
 ```java
 IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(MainActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
 	@Override
-	public void onIntentPicked(Intent intent) {
+	public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
 		bottomSheet.dismissSheet();
-		startActivity(intent);
+		startActivity(activityInfo.getConcreteIntent(shareIntent));
 	}
-});
+}));
 // Filter out built in sharing options such as bluetooth and beam.
 intentPickerSheet.setFilter(new IntentPickerSheetView.Filter() {
 	@Override
