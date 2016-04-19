@@ -716,7 +716,6 @@ public class BottomSheetLayout extends FrameLayout {
                     // Remove sheet specific properties
                     viewTransformer = null;
                     onSheetDismissedListeners.clear();
-                    onSheetStateChangeListeners.clear();
                     if (runAfterDismiss != null) {
                         runAfterDismiss.run();
                         runAfterDismiss = null;
