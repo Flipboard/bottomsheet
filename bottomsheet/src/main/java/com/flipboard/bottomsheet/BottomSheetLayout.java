@@ -239,8 +239,8 @@ public class BottomSheetLayout extends FrameLayout {
         return super.onKeyPreIme(keyCode, event);
     }
 
-    private void setSheetTranslation(float sheetTranslation) {
-        this.sheetTranslation = sheetTranslation;
+    private void setSheetTranslation(float newTranslation) {
+        this.sheetTranslation = Math.min(newTranslation, getMaxSheetTranslation());
         int bottomClip = (int) (getHeight() - Math.ceil(sheetTranslation));
         this.contentClipRect.set(0, 0, getWidth(), bottomClip);
         getSheetView().setTranslationY(getHeight() - sheetTranslation);
