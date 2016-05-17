@@ -121,6 +121,9 @@ public class BottomSheetLayout extends FrameLayout {
     /** Snapshot of the sheet's state at the time of the last down event */
     private State downState;
 
+    /** Percent height of peeked sheet */
+    private float defaultPeekTranslationHeightPercent = 0.33333f;
+
     public BottomSheetLayout(Context context) {
         super(context);
         init();
@@ -542,8 +545,18 @@ public class BottomSheetLayout extends FrameLayout {
         return peek == 0 ? getDefaultPeekTranslation() : peek;
     }
 
+    public void setDefaultPeekTranslationHeightPercent(float percent) {
+        defaultPeekTranslationHeightPercent = percent;
+        if (defaultPeekTranslationHeightPercent < 0.0f) {
+            defaultPeekTranslationHeightPercent = 0.0f;
+        }
+        if (defaultPeekTranslationHeightPercent > 1.0f) {
+            defaultPeekTranslationHeightPercent = 1.0f;
+        }
+    }
+
     private float getDefaultPeekTranslation() {
-        return hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight();
+        return hasFullHeightSheet() ? (getHeight() * defaultPeekTranslationHeightPercent) : getSheetView().getHeight();
     }
 
     /**
