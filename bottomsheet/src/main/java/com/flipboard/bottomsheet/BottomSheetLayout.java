@@ -346,7 +346,7 @@ public class BottomSheetLayout extends FrameLayout {
                 downY = event.getY();
                 downSheetTranslation = sheetTranslation;
                 velocityTracker.clear();
-                setState(State.PEEKED);
+                setState(State.PEEKED, false);
                 setSheetLayerTypeIfEnabled(LAYER_TYPE_HARDWARE);
                 newSheetTranslation = sheetTranslation;
 
@@ -367,7 +367,7 @@ public class BottomSheetLayout extends FrameLayout {
                 downEvent.setAction(MotionEvent.ACTION_DOWN);
                 getSheetView().dispatchTouchEvent(downEvent);
                 downEvent.recycle();
-                setState(State.EXPANDED);
+                setState(State.EXPANDED, false);
                 setSheetLayerTypeIfEnabled(LAYER_TYPE_NONE);
             }
 
@@ -470,9 +470,15 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private void setState(State state) {
+        setState(state, true);
+    }
+
+    private void setState(State state, boolean notify) {
         this.state = state;
-        for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
-            onSheetStateChangeListener.onSheetStateChanged(state);
+        if (notify) {
+            for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
+                onSheetStateChangeListener.onSheetStateChanged(state);
+            }
         }
     }
 
