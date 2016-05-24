@@ -470,9 +470,11 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private void setState(State state) {
-        this.state = state;
-        for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
-            onSheetStateChangeListener.onSheetStateChanged(state);
+        if (state != this.state) {
+            this.state = state;
+            for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
+                onSheetStateChangeListener.onSheetStateChanged(state);
+            }
         }
     }
 
