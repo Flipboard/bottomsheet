@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.flipboard:bottomsheet-core:1.5.0'
-    compile 'com.flipboard:bottomsheet-commons:1.5.0' // optional
+    compile 'com.flipboard:bottomsheet-core:1.5.1'
+    compile 'com.flipboard:bottomsheet-commons:1.5.1' // optional
 }
 ```
 
