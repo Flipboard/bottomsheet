@@ -104,7 +104,7 @@ IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(MainActivity
 		bottomSheet.dismissSheet();
 		startActivity(activityInfo.getConcreteIntent(shareIntent));
 	}
-}));
+});
 // Filter out built in sharing options such as bluetooth and beam.
 intentPickerSheet.setFilter(new IntentPickerSheetView.Filter() {
 	@Override
