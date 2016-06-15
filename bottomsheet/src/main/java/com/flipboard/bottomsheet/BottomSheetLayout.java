@@ -450,13 +450,11 @@ public class BottomSheetLayout extends FrameLayout {
             ViewGroup vg = (ViewGroup) view;
             for (int i = 0; i < vg.getChildCount(); i++) {
                 View child = vg.getChildAt(i);
-
                 int childLeft = child.getLeft() - view.getScrollX();
                 int childTop = child.getTop() - view.getScrollY();
                 int childRight = child.getRight() - view.getScrollX();
                 int childBottom = child.getBottom() - view.getScrollY();
-
-                boolean intersects = childLeft < x && x < childRight && childTop < y && y < childBottom;
+                boolean intersects = x > childLeft && x < childRight && y > childTop && y < childBottom;
                 if (intersects && canScrollUp(child, x - childLeft, y - childTop)) {
                     return true;
                 }
