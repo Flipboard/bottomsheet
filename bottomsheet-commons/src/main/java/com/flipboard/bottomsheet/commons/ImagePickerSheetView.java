@@ -193,7 +193,7 @@ public class ImagePickerSheetView extends FrameLayout {
         // Set up the grid
         tileGrid = (GridView) findViewById(R.id.grid);
 
-        if(builder.spacing>0){
+        if(builder.spacing>=0){
             spacing = builder.spacing;
         }else {
             spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
@@ -386,7 +386,7 @@ public class ImagePickerSheetView extends FrameLayout {
         boolean showPickerOption = true;
         Drawable cameraDrawable = null;
         Drawable pickerDrawable = null;
-        int spacing;
+        int spacing = -1;
 
         public Builder(@NonNull Context context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
@@ -531,7 +531,7 @@ public class ImagePickerSheetView extends FrameLayout {
 
 
         /**
-         * Sets spacing of grid in the image picker.
+         * Sets space between items in the grid in pixels.
          *
          * @param spacing Spacing of grid
          * @return This builder instance
