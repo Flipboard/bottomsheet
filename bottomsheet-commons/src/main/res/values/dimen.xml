@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="bottomsheet_image_tile_spacing">4dp</dimen>
+    <dimen name="bottomsheet_grid_text_spacing">2dp</dimen>
 </resources>
