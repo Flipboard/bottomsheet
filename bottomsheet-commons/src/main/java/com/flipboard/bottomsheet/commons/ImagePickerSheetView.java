@@ -531,7 +531,7 @@ public class ImagePickerSheetView extends FrameLayout {
 
 
         /**
-         * Sets space between items in the grid in pixels.
+         * space between items in the grid in pixels.
          *
          * @param spacing Spacing of grid
          * @return This builder instance
@@ -541,6 +541,12 @@ public class ImagePickerSheetView extends FrameLayout {
             return this;
         }
 
+        /**
+         * space between items in the grid in pixels.
+         *
+         * @param resId Spacing of grid resource ID
+         * @return This builder instance
+         */
         public Builder setGridSpacingResId(@DimenRes int resId){
             this.spacing = context.getResources().getDimensionPixelSize(resId);
             return this;
