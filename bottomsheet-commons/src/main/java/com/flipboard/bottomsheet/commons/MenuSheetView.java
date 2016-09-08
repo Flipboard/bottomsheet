@@ -3,6 +3,7 @@ package com.flipboard.bottomsheet.commons;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -41,6 +42,9 @@ import static com.flipboard.bottomsheet.commons.MenuSheetView.MenuType.LIST;
 @SuppressLint("ViewConstructor")
 public class MenuSheetView extends FrameLayout {
 
+    public static final int DEFAULT_LAYOUT_LIST_ITEM = R.layout.sheet_list_item;
+    public static final int DEFAULT_LAYOUT_GRID_ITEM = R.layout.sheet_grid_item;
+
     /**
      * A listener for menu item clicks in the sheet
      */
@@ -61,6 +65,8 @@ public class MenuSheetView extends FrameLayout {
     private final TextView titleView;
     protected final int originalListPaddingTop;
     private int columnWidthDp = 100;
+    private int listItemRes = DEFAULT_LAYOUT_LIST_ITEM;
+    private int gridItemRes = DEFAULT_LAYOUT_GRID_ITEM;
 
     /**
      * @param context Context to construct the view with
@@ -253,6 +259,27 @@ public class MenuSheetView extends FrameLayout {
     }
 
     /**
+     * Sets a custom layout for displaying a list item when of type {@link MenuType#LIST}
+     * Call this before {@link #onAttachedToWindow()} gets called if you want to see the custom view immediately,
+     * otherwise default layout will be used.
+     * @param listItemRes needs to have an {@link ImageView} with id set to R.id.icon and {@link TextView} with id set to R.id.label
+     */
+    public void setListItemRes(@LayoutRes int listItemRes) {
+        this.listItemRes = listItemRes;
+    }
+
+    /**
+     * Sets a custom layout for displaying a list item when of type {@link MenuType#GRID}
+     * Call this before {@link #onAttachedToWindow()} gets called if you want to see the custom view immediately,
+     * otherwise default layout will be used.
+     * @param gridItemRes needs to have an {@link ImageView} with id set to R.id.icon and {@link TextView} with id set to R.id.label
+     */
+    public void setGridItemRes(@LayoutRes int gridItemRes) {
+        this.gridItemRes = gridItemRes;
+    }
+
+
+    /**
      * @return The current title text of the sheet
      */
     public CharSequence getTitle() {
@@ -313,7 +340,7 @@ public class MenuSheetView extends FrameLayout {
                 case VIEW_TYPE_NORMAL:
                     NormalViewHolder holder;
                     if (convertView == null) {
-                        convertView = inflater.inflate(menuType == GRID ? R.layout.sheet_grid_item : R.layout.sheet_list_item, parent, false);
+                        convertView = inflater.inflate(menuType == GRID ? gridItemRes : listItemRes, parent, false);
                         holder = new NormalViewHolder(convertView);
                         convertView.setTag(holder);
                     } else {
