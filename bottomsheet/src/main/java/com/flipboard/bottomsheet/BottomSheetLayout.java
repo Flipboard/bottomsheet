@@ -121,6 +121,12 @@ public class BottomSheetLayout extends FrameLayout {
     /** Snapshot of the sheet's state at the time of the last down event */
     private State downState;
 
+    private OnPeekSheetListener onPeekSheetListener;
+
+    public interface OnPeekSheetListener {
+        void onPeekSheet();
+    }
+
     public BottomSheetLayout(Context context) {
         super(context);
         init();
@@ -535,6 +541,13 @@ public class BottomSheetLayout extends FrameLayout {
         anim.start();
         currentAnimator = anim;
         setState(State.PEEKED);
+        if (onPeekSheetListener != null) {
+            onPeekSheetListener.onPeekSheet();
+        }
+    }
+
+    public void setOnPeekSheetListener(OnPeekSheetListener onPeekSheetListener) {
+        this.onPeekSheetListener = onPeekSheetListener;
     }
 
     /**
