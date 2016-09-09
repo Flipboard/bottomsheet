@@ -122,9 +122,14 @@ public class BottomSheetLayout extends FrameLayout {
     private State downState;
 
     private OnPeekSheetListener onPeekSheetListener;
+    private OnExpandSheetListener onExpandSheetListener;
 
     public interface OnPeekSheetListener {
         void onPeekSheet();
+    }
+
+    public interface OnExpandSheetListener {
+        void onExpandSheet();
     }
 
     public BottomSheetLayout(Context context) {
@@ -519,6 +524,13 @@ public class BottomSheetLayout extends FrameLayout {
         anim.start();
         currentAnimator = anim;
         setState(State.EXPANDED);
+        if (onExpandSheetListener != null) {
+            onExpandSheetListener.onExpandSheet();
+        }
+    }
+
+    public void setOnExpandSheetListener(OnExpandSheetListener onExpandSheetListener) {
+        this.onExpandSheetListener = onExpandSheetListener;
     }
 
     /**
