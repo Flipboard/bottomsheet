@@ -65,8 +65,8 @@ public class MenuSheetView extends FrameLayout {
     private final TextView titleView;
     protected final int originalListPaddingTop;
     private int columnWidthDp = 100;
-    private int listItemRes = DEFAULT_LAYOUT_LIST_ITEM;
-    private int gridItemRes = DEFAULT_LAYOUT_GRID_ITEM;
+    private int listItemLayoutRes = DEFAULT_LAYOUT_LIST_ITEM;
+    private int gridItemLayoutRes = DEFAULT_LAYOUT_GRID_ITEM;
 
     /**
      * @param context Context to construct the view with
@@ -259,23 +259,21 @@ public class MenuSheetView extends FrameLayout {
     }
 
     /**
-     * Sets a custom layout for displaying a list item when of type {@link MenuType#LIST}
-     * Call this before {@link #onAttachedToWindow()} gets called if you want to see the custom view immediately,
-     * otherwise default layout will be used.
-     * @param listItemRes needs to have an {@link ImageView} with id set to R.id.icon and {@link TextView} with id set to R.id.label
+     * Override the layout for displaying a list item when of type {@link MenuType#LIST}. <br>
+     * Call this before you attach to window using {@link com.flipboard.bottomsheet.BottomSheetLayout#showWithSheetView}.
+     * @param listItemLayoutRes needs to have an {@link ImageView} with id set to {@link R.id#icon} and {@link TextView} with id set to {@link R.id#label}
      */
-    public void setListItemRes(@LayoutRes int listItemRes) {
-        this.listItemRes = listItemRes;
+    public void setListItemLayoutRes(@LayoutRes int listItemLayoutRes) {
+        this.listItemLayoutRes = listItemLayoutRes;
     }
 
     /**
-     * Sets a custom layout for displaying a list item when of type {@link MenuType#GRID}
-     * Call this before {@link #onAttachedToWindow()} gets called if you want to see the custom view immediately,
-     * otherwise default layout will be used.
-     * @param gridItemRes needs to have an {@link ImageView} with id set to R.id.icon and {@link TextView} with id set to R.id.label
+     * Override the layout for displaying a grid item when of type {@link MenuType#GRID}. <br>
+     * Call this before you attach to window using {@link com.flipboard.bottomsheet.BottomSheetLayout#showWithSheetView}.
+     * @param gridItemLayoutRes needs to have an {@link ImageView} with id set to {@link R.id#icon} and {@link TextView} with id set to {@link R.id#label}
      */
-    public void setGridItemRes(@LayoutRes int gridItemRes) {
-        this.gridItemRes = gridItemRes;
+    public void setGridItemLayoutRes(@LayoutRes int gridItemLayoutRes) {
+        this.gridItemLayoutRes = gridItemLayoutRes;
     }
 
 
@@ -340,7 +338,7 @@ public class MenuSheetView extends FrameLayout {
                 case VIEW_TYPE_NORMAL:
                     NormalViewHolder holder;
                     if (convertView == null) {
-                        convertView = inflater.inflate(menuType == GRID ? gridItemRes : listItemRes, parent, false);
+                        convertView = inflater.inflate(menuType == GRID ? gridItemLayoutRes : listItemLayoutRes, parent, false);
                         holder = new NormalViewHolder(convertView);
                         convertView.setTag(holder);
                     } else {
