@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Property;
 import android.view.Gravity;
 import android.view.KeyEvent;
