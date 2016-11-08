@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Property;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -478,6 +479,10 @@ public class BottomSheetLayout extends FrameLayout {
         }
     }
 
+    private boolean hasTallerKeylineHeightSheet() {
+        return getSheetView() == null || getSheetView().getHeight() > getPeekKeyline();
+    }
+
     private boolean hasFullHeightSheet() {
         return getSheetView() == null || getSheetView().getHeight() == getHeight();
     }
@@ -545,7 +550,14 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private float getDefaultPeekTranslation() {
-        return hasFullHeightSheet() ? getHeight() / 3 : getSheetView().getHeight();
+        return hasTallerKeylineHeightSheet() ? getPeekKeyline() : getSheetView().getHeight();
+    }
+
+    private float getPeekKeyline() {
+        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        final int screenWidth = displayMetrics.widthPixels;
+        final int screenHeight = displayMetrics.heightPixels;
+        return screenHeight - (screenWidth / (16.0f / 9.0f));
     }
 
     /**
