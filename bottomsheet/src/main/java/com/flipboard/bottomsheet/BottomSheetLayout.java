@@ -101,6 +101,7 @@ public class BottomSheetLayout extends FrameLayout {
     private boolean interceptContentTouch = true;
     private int currentSheetViewHeight;
     private boolean hasIntercepted;
+    private float peekKeyline;
     private float peek;
 
     /** Some values we need to manage width on tablets */
@@ -152,14 +153,15 @@ public class BottomSheetLayout extends FrameLayout {
         dimView.setAlpha(0);
         dimView.setVisibility(INVISIBLE);
 
-        peek = 0;//getHeight() return 0 at start!
-
         setFocusableInTouchMode(true);
 
         Point point = new Point();
         ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
         screenWidth = point.x;
         sheetEndX = screenWidth;
+
+        peek = 0; //getHeight() return 0 at start!
+        peekKeyline = point.y - (screenWidth / (16.0f / 9.0f));
     }
 
     /**
@@ -480,7 +482,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private boolean hasTallerKeylineHeightSheet() {
-        return getSheetView() == null || getSheetView().getHeight() > getPeekKeyline();
+        return getSheetView() == null || getSheetView().getHeight() > peekKeyline;
     }
 
     private boolean hasFullHeightSheet() {
@@ -550,14 +552,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private float getDefaultPeekTranslation() {
-        return hasTallerKeylineHeightSheet() ? getPeekKeyline() : getSheetView().getHeight();
-    }
-
-    private float getPeekKeyline() {
-        final DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        final int screenWidth = displayMetrics.widthPixels;
-        final int screenHeight = displayMetrics.heightPixels;
-        return screenHeight - (screenWidth / (16.0f / 9.0f));
+        return hasTallerKeylineHeightSheet() ? peekKeyline : getSheetView().getHeight();
     }
 
     /**
