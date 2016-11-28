@@ -693,7 +693,7 @@ public class BottomSheetLayout extends FrameLayout {
     public void dismissSheet() {
         dismissSheet(null);
     }
-    
+
     private void dismissSheet(Runnable runAfterDismissThis) {
         if (state == State.HIDDEN) {
             runAfterDismiss = null;
@@ -723,8 +723,6 @@ public class BottomSheetLayout extends FrameLayout {
 
                     // Remove sheet specific properties
                     viewTransformer = null;
-                    onSheetDismissedListeners.clear();
-                    onSheetStateChangeListeners.clear();
                     if (runAfterDismiss != null) {
                         runAfterDismiss.run();
                         runAfterDismiss = null;
@@ -835,6 +833,8 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Adds an {@link OnSheetStateChangeListener} which will be notified when the state of the presented sheet changes.
+     * The listener will not be automatically removed, so remember to remove it when it's no longer needed
+     * (probably when the sheet is HIDDEN)
      *
      * @param onSheetStateChangeListener the listener to be notified.
      */
@@ -845,6 +845,8 @@ public class BottomSheetLayout extends FrameLayout {
 
     /**
      * Adds an {@link OnSheetDismissedListener} which will be notified when the state of the presented sheet changes.
+     * The listener will not be automatically removed, so remember to remove it when it's no longer needed
+     * (probably when the sheet is HIDDEN)
      *
      * @param onSheetDismissedListener the listener to be notified.
      */
