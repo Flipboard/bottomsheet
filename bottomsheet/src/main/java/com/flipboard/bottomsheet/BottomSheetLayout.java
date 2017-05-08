@@ -148,7 +148,7 @@ public class BottomSheetLayout extends FrameLayout {
         touchSlop = viewConfiguration.getScaledTouchSlop();
 
         dimView = new View(getContext());
-        dimView.setBackgroundColor(Color.BLACK);
+        dimView.setBackgroundColor(Color.TRANSPARENT);
         dimView.setAlpha(0);
         dimView.setVisibility(INVISIBLE);
 
@@ -477,6 +477,14 @@ public class BottomSheetLayout extends FrameLayout {
             for (OnSheetStateChangeListener onSheetStateChangeListener : onSheetStateChangeListeners) {
                 onSheetStateChangeListener.onSheetStateChanged(state);
             }
+        }
+
+        switch (state){
+            case HIDDEN:
+                dimView.setBackgroundColor(Color.TRANSPARENT);
+                break;
+            default:
+                dimView.setBackgroundColor(Color.BLACK);
         }
     }
 
