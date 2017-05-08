@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.CheckResult;
+import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -191,7 +192,13 @@ public class ImagePickerSheetView extends FrameLayout {
 
         // Set up the grid
         tileGrid = (GridView) findViewById(R.id.grid);
-        spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
+
+        if(builder.spacing>=0){
+            spacing = builder.spacing;
+        }else {
+            spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
+        }
+
         tileGrid.setDrawSelectorOnTop(true);
         tileGrid.setVerticalSpacing(spacing);
         tileGrid.setHorizontalSpacing(spacing);
@@ -379,6 +386,7 @@ public class ImagePickerSheetView extends FrameLayout {
         boolean showPickerOption = true;
         Drawable cameraDrawable = null;
         Drawable pickerDrawable = null;
+        int spacing = -1;
 
         public Builder(@NonNull Context context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
@@ -518,6 +526,30 @@ public class ImagePickerSheetView extends FrameLayout {
                 throw new IllegalStateException("Must provide an ImageProvider!");
             }
             return new ImagePickerSheetView(this);
+        }
+
+
+
+        /**
+         * space between items in the grid in pixels.
+         *
+         * @param spacing Spacing of grid
+         * @return This builder instance
+         */
+        public Builder setGridSpacing(int spacing){
+            this.spacing = spacing;
+            return this;
+        }
+
+        /**
+         * space between items in the grid in pixels.
+         *
+         * @param resId Spacing of grid resource ID
+         * @return This builder instance
+         */
+        public Builder setGridSpacingResId(@DimenRes int resId){
+            this.spacing = context.getResources().getDimensionPixelSize(resId);
+            return this;
         }
     }
 
