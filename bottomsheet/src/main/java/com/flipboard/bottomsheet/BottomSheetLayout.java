@@ -164,7 +164,7 @@ public class BottomSheetLayout extends FrameLayout {
         float ratio = ((float)metrics.heightPixels / (float)metrics.widthPixels);
 
         peek = 0; //getHeight() return 0 at start!
-        peekKeyline = point.y * ratio;
+        peekKeyline = Math.min(point.y / ratio, point.y * ratio);
     }
 
     /**
