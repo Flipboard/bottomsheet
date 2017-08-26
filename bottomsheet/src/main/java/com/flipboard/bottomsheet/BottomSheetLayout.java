@@ -679,7 +679,7 @@ public class BottomSheetLayout extends FrameLayout {
                     if (state == State.EXPANDED) {
                         setState(State.PEEKED);
                     }
-                    setSheetTranslation(newSheetViewHeight);
+                  //  setSheetTranslation(newSheetViewHeight);
                 }
                 currentSheetViewHeight = newSheetViewHeight;
             }
