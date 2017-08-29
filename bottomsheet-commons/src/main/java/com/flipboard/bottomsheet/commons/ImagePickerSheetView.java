@@ -340,6 +340,9 @@ public class ImagePickerSheetView extends FrameLayout {
                     thumb = (ImageView) inflater.inflate(R.layout.sheet_image_grid_item, parent, false);
                 } else {
                     thumb = (ImageView) inflater.inflate(tileLayout, parent, false);
+                    if (!(thumb instanceof ImageView)) {
+                        throw new IllegalArgumentException("Tile layout must have an ImageView as root view.");
+                    }
                 }
             } else {
                 thumb = (ImageView) recycled;
@@ -509,8 +512,8 @@ public class ImagePickerSheetView extends FrameLayout {
         }
 
         /**
-         * Sets a layout for the image tile. Default is to use plain image view included in the
-         * library.
+         * Sets a layout for the image tile which MUST have an ImageView as root view. Default is to
+         * use plain image view included in the library.
          *
          * @param tileLayout Tile layout resource ID
          * @return This builder instance
