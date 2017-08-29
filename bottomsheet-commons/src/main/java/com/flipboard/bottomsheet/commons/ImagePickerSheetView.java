@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.annotation.CheckResult;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -180,6 +181,7 @@ public class ImagePickerSheetView extends FrameLayout {
     protected boolean showPickerOption = true;
     protected Drawable cameraDrawable = null;
     protected Drawable pickerDrawable = null;
+    protected @LayoutRes int tileLayout = R.layout.sheet_image_grid_item;
     protected String title;
     private int columnWidthDp = 100;
 
@@ -217,6 +219,7 @@ public class ImagePickerSheetView extends FrameLayout {
         showPickerOption = builder.showPickerOption;
         cameraDrawable = builder.cameraDrawable;
         pickerDrawable = builder.pickerDrawable;
+        tileLayout = builder.tileLayout;
 
         ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
     }
@@ -333,7 +336,14 @@ public class ImagePickerSheetView extends FrameLayout {
             ImageView thumb;
 
             if (recycled == null) {
-                thumb = (ImageView) inflater.inflate(R.layout.sheet_image_grid_item, parent, false);
+                if (tileLayout == 0) {
+                    thumb = (ImageView) inflater.inflate(R.layout.sheet_image_grid_item, parent, false);
+                } else {
+                    thumb = (ImageView) inflater.inflate(tileLayout, parent, false);
+                    if (!(thumb instanceof ImageView)) {
+                        throw new IllegalArgumentException("Tile layout must have an ImageView as root view.");
+                    }
+                }
             } else {
                 thumb = (ImageView) recycled;
             }
@@ -379,6 +389,7 @@ public class ImagePickerSheetView extends FrameLayout {
         boolean showPickerOption = true;
         Drawable cameraDrawable = null;
         Drawable pickerDrawable = null;
+        @LayoutRes int tileLayout = 0;
 
         public Builder(@NonNull Context context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
@@ -498,6 +509,18 @@ public class ImagePickerSheetView extends FrameLayout {
          */
         public Builder setPickerDrawable(@DrawableRes int resId) {
             return setPickerDrawable(ResourcesCompat.getDrawable(context.getResources(), resId, null));
+        }
+
+        /**
+         * Sets a layout for the image tile which MUST have an ImageView as root view. Default is to
+         * use plain image view included in the library.
+         *
+         * @param tileLayout Tile layout resource ID
+         * @return This builder instance
+         */
+        public Builder setTileLayout(@LayoutRes int tileLayout) {
+            this.tileLayout = tileLayout;
+            return this;
         }
 
         /**
