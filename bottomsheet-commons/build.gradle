@@ -2,15 +2,16 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 26
     }
     lintOptions {
-          abortOnError false
+        abortOnError false
+        disable 'RestrictedApi'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -21,7 +22,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':bottomsheet')
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:26+'
 }
 
 publish {
