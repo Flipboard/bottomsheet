@@ -81,6 +81,7 @@ public class BottomSheetLayout extends FrameLayout {
     private Rect contentClipRect = new Rect();
     private State state = State.HIDDEN;
     private boolean peekOnDismiss = false;
+    private boolean canBeDismissed = true;
     private TimeInterpolator animationInterpolator = new DecelerateInterpolator(1.6f);
     public boolean bottomSheetOwnsTouch;
     private boolean sheetViewOwnsTouch;
@@ -695,7 +696,7 @@ public class BottomSheetLayout extends FrameLayout {
     }
 
     private void dismissSheet(Runnable runAfterDismissThis) {
-        if (state == State.HIDDEN) {
+        if (state == State.HIDDEN || !canBeDismissed) {
             runAfterDismiss = null;
             return;
         }
@@ -734,6 +735,26 @@ public class BottomSheetLayout extends FrameLayout {
         currentAnimator = anim;
         sheetStartX = 0;
         sheetEndX = screenWidth;
+    }
+
+    /**
+     * Determines whether this Bottom Sheet can be dismissed.
+     *
+     * @param canBeDismissed true to make the Bottom Sheet dismissable.
+     *                       false to make the Bottom Sheet sticky. Default is true.
+     */
+    public void setCanBeDismissed(boolean canBeDismissed) {
+        this.canBeDismissed = canBeDismissed;
+    }
+
+    /**
+     * Returns the current canBeDismissed value, which controls whether this Bottom Sheet
+     * can be dismissed.
+     *
+     * @return the current canBeDismissed value
+     */
+    public boolean getCanBeDismised() {
+        return this.canBeDismissed;
     }
 
     /**
