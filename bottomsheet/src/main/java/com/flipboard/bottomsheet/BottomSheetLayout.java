@@ -676,12 +676,15 @@ public class BottomSheetLayout extends FrameLayout {
                 int newSheetViewHeight = sheetView.getMeasuredHeight();
                 if (state != State.HIDDEN) {
                     // The sheet can no longer be in the expanded state if it has shrunk
-                    if (newSheetViewHeight < currentSheetViewHeight && state == State.EXPANDED) {
-                        setState(State.PEEKED);
-                    } else if (newSheetViewHeight > currentSheetViewHeight && newSheetViewHeight == getMaxSheetTranslation() && state == State.PEEKED) {
-                        setState(State.EXPANDED);
-                    }
-                    if (newSheetViewHeight != currentSheetViewHeight) {
+                    if (newSheetViewHeight < currentSheetViewHeight) {
+                        if (state == State.EXPANDED) {
+                            setState(State.PEEKED);
+                        }
+                        setSheetTranslation(newSheetViewHeight);
+                    } else if (currentSheetViewHeight > 0 && newSheetViewHeight > currentSheetViewHeight && state == State.PEEKED) {
+                        if (newSheetViewHeight == getMaxSheetTranslation()) {
+                            setState(State.EXPANDED);
+                        }
                         setSheetTranslation(newSheetViewHeight);
                     }
                 }
