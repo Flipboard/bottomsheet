@@ -629,21 +629,22 @@ public class BottomSheetLayout extends FrameLayout {
             params = new LayoutParams(isTablet ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
         }
 
-        if (isTablet && params.width == FrameLayout.LayoutParams.WRAP_CONTENT) {
-
-            // Center by default if they didn't specify anything
-            if (params.gravity == -1) {
-                params.gravity = Gravity.CENTER_HORIZONTAL;
+        if (isTablet) {
+            if (params.width == FrameLayout.LayoutParams.WRAP_CONTENT) {
+                // Center by default if they didn't specify anything
+                if (params.gravity == -1) {
+                    params.gravity = Gravity.CENTER_HORIZONTAL;
+                }
+                params.width = defaultSheetWidth;
             }
-
-            params.width = defaultSheetWidth;
-
-            // Update start and end coordinates for touch reference
-            int horizontalSpacing = screenWidth - defaultSheetWidth;
-            sheetStartX = horizontalSpacing / 2;
-            sheetEndX = screenWidth - sheetStartX;
+            
+            if (params.width != FrameLayout.LayoutParams.MATCH_PARENT){
+                int horizontalSpacing = screenWidth - params.width;
+                sheetStartX = horizontalSpacing / 2;
+                sheetEndX = screenWidth - sheetStartX;
+            }
         }
-
+        
         super.addView(sheetView, -1, params);
         initializeSheetValues();
         this.viewTransformer = viewTransformer;
