@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;
 import com.flipboard.bottomsheet.commons.ImagePickerSheetView;
@@ -28,6 +29,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Activity demonstrating the use of {@link ImagePickerSheetView}
@@ -100,10 +103,12 @@ public final class ImagePickerActivity extends AppCompatActivity {
                 .setImageProvider(new ImagePickerSheetView.ImageProvider() {
                     @Override
                     public void onProvideImage(ImageView imageView, Uri imageUri, int size) {
+                        RequestOptions glideRequestOptions = RequestOptions
+                                .centerCropTransform();
                         Glide.with(ImagePickerActivity.this)
                                 .load(imageUri)
-                                .centerCrop()
-                                .crossFade()
+                                .apply(glideRequestOptions)
+                                .transition(withCrossFade())
                                 .into(imageView);
                     }
                 })
@@ -231,10 +236,12 @@ public final class ImagePickerActivity extends AppCompatActivity {
 
     private void showSelectedImage(Uri selectedImageUri) {
         selectedImage.setImageDrawable(null);
+        RequestOptions glideRequestOptions = RequestOptions
+                .fitCenterTransform();
         Glide.with(this)
                 .load(selectedImageUri)
-                .crossFade()
-                .fitCenter()
+                .apply(glideRequestOptions)
+                .transition(withCrossFade())
                 .into(selectedImage);
     }
 
