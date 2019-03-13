@@ -10,15 +10,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;
 import com.flipboard.bottomsheet.commons.ImagePickerSheetView;
@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Activity demonstrating the use of {@link ImagePickerSheetView}
@@ -45,17 +47,14 @@ public final class ImagePickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_picker);
-        bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
+        bottomSheetLayout = findViewById(R.id.bottomsheet);
         bottomSheetLayout.setPeekOnDismiss(true);
-        selectedImage = (ImageView) findViewById(R.id.image_picker_selected);
-        findViewById(R.id.image_picker_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkNeedsPermission()) {
-                    requestStoragePermission();
-                } else {
-                    showSheetView();
-                }
+        selectedImage = findViewById(R.id.image_picker_selected);
+        findViewById(R.id.image_picker_button).setOnClickListener(v -> {
+            if (checkNeedsPermission()) {
+                requestStoragePermission();
+            } else {
+                showSheetView();
             }
         });
     }
@@ -97,29 +96,25 @@ public final class ImagePickerActivity extends AppCompatActivity {
                 .setMaxItems(30)
                 .setShowCameraOption(createCameraIntent() != null)
                 .setShowPickerOption(createPickIntent() != null)
-                .setImageProvider(new ImagePickerSheetView.ImageProvider() {
-                    @Override
-                    public void onProvideImage(ImageView imageView, Uri imageUri, int size) {
-                        Glide.with(ImagePickerActivity.this)
-                                .load(imageUri)
-                                .centerCrop()
-                                .crossFade()
-                                .into(imageView);
-                    }
+                .setImageProvider((imageView, imageUri, size) -> {
+                    RequestOptions glideRequestOptions = RequestOptions
+                            .centerCropTransform();
+                    Glide.with(ImagePickerActivity.this)
+                            .load(imageUri)
+                            .apply(glideRequestOptions)
+                            .transition(withCrossFade())
+                            .into(imageView);
                 })
-                .setOnTileSelectedListener(new ImagePickerSheetView.OnTileSelectedListener() {
-                    @Override
-                    public void onTileSelected(ImagePickerSheetView.ImagePickerTile selectedTile) {
-                        bottomSheetLayout.dismissSheet();
-                        if (selectedTile.isCameraTile()) {
-                            dispatchTakePictureIntent();
-                        } else if (selectedTile.isPickerTile()) {
-                            startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
-                        } else if (selectedTile.isImageTile()) {
-                            showSelectedImage(selectedTile.getImageUri());
-                        } else {
-                            genericError();
-                        }
+                .setOnTileSelectedListener(selectedTile -> {
+                    bottomSheetLayout.dismissSheet();
+                    if (selectedTile.isCameraTile()) {
+                        dispatchTakePictureIntent();
+                    } else if (selectedTile.isPickerTile()) {
+                        startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
+                    } else if (selectedTile.isImageTile()) {
+                        showSelectedImage(selectedTile.getImageUri());
+                    } else {
+                        genericError();
                     }
                 })
                 .setTitle("Choose an image...")
@@ -231,10 +226,12 @@ public final class ImagePickerActivity extends AppCompatActivity {
 
     private void showSelectedImage(Uri selectedImageUri) {
         selectedImage.setImageDrawable(null);
+        RequestOptions glideRequestOptions = RequestOptions
+                .fitCenterTransform();
         Glide.with(this)
                 .load(selectedImageUri)
-                .crossFade()
-                .fitCenter()
+                .apply(glideRequestOptions)
+                .transition(withCrossFade())
                 .into(selectedImage);
     }
 

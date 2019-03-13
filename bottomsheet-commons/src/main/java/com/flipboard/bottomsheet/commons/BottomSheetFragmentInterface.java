@@ -1,13 +1,14 @@
 package com.flipboard.bottomsheet.commons;
 
-import android.support.annotation.IdRes;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.IdRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.flipboard.bottomsheet.ViewTransformer;
 
 /**
- * This interface can be applied to a {@link android.support.v4.app.Fragment} to make it compatible with
+ * This interface can be applied to a {@link Fragment} to make it compatible with
  * {@link BottomSheetFragmentDelegate}. You should only have to implement
  */
 public interface BottomSheetFragmentInterface {

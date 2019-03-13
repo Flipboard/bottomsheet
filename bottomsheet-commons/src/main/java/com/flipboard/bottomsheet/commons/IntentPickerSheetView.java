@@ -9,13 +9,12 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -116,16 +115,11 @@ public class IntentPickerSheetView extends FrameLayout {
         this.intent = intent;
 
         inflate(context, R.layout.grid_sheet_view, this);
-        appGrid = (GridView) findViewById(R.id.grid);
-        titleView = (TextView) findViewById(R.id.title);
+        appGrid = findViewById(R.id.grid);
+        titleView = findViewById(R.id.title);
 
         titleView.setText(title);
-        appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listener.onIntentPicked(adapter.getItem(position));
-            }
-        });
+        appGrid.setOnItemClickListener((parent, view, position, id) -> listener.onIntentPicked(adapter.getItem(position)));
 
         ViewCompat.setElevation(this, Util.dp2px(getContext(), 16f));
     }
@@ -263,8 +257,8 @@ public class IntentPickerSheetView extends FrameLayout {
             final TextView label;
 
             ViewHolder(View root) {
-                icon = (ImageView) root.findViewById(R.id.icon);
-                label = (TextView) root.findViewById(R.id.label);
+                icon = root.findViewById(R.id.icon);
+                label = root.findViewById(R.id.label);
             }
         }
 

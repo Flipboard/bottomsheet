@@ -3,13 +3,13 @@ package com.flipboard.bottomsheet.commons;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.MenuRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.view.SupportMenuInflater;
-import android.support.v7.view.menu.MenuBuilder;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.MenuRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.view.SupportMenuInflater;
+import androidx.appcompat.view.menu.MenuBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +18,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -93,18 +92,13 @@ public class MenuSheetView extends FrameLayout {
 
         // Inflate the appropriate view and set up the absListView
         inflate(context, menuType == GRID ? R.layout.grid_sheet_view : R.layout.list_sheet_view, this);
-        absListView = (AbsListView) findViewById(menuType == GRID ? R.id.grid : R.id.list);
+        absListView = findViewById(menuType == GRID ? R.id.grid : R.id.list);
         if (listener != null) {
-            absListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    listener.onMenuItemClick(adapter.getItem(position).getMenuItem());
-                }
-            });
+            absListView.setOnItemClickListener((parent, view, position, id) -> listener.onMenuItemClick(adapter.getItem(position).getMenuItem()));
         }
 
         // Set up the title
-        titleView = (TextView) findViewById(R.id.title);
+        titleView = findViewById(R.id.title);
         originalListPaddingTop = absListView.getPaddingTop();
         setTitle(title);
 
@@ -378,8 +372,8 @@ public class MenuSheetView extends FrameLayout {
             final TextView label;
 
             NormalViewHolder(View root) {
-                icon = (ImageView) root.findViewById(R.id.icon);
-                label = (TextView) root.findViewById(R.id.label);
+                icon = root.findViewById(R.id.icon);
+                label = root.findViewById(R.id.label);
             }
 
             public void bindView(SheetMenuItem item) {

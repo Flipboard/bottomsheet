@@ -1,4 +1,4 @@
-package android.support.v4.app;
+package androidx.fragment.app;
 
 public final class AccessFragmentInternals {
     private AccessFragmentInternals() {
