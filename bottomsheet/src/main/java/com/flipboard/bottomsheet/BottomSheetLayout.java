@@ -10,7 +10,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Property;
 import android.view.Gravity;

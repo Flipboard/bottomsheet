@@ -1,7 +1,7 @@
 package com.flipboard.bottomsheet.sample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.R;

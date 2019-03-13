@@ -2,12 +2,13 @@ package com.flipboard.bottomsheet.commons;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
@@ -15,7 +16,7 @@ import com.flipboard.bottomsheet.ViewTransformer;
 
 /**
  * A fragment that shows itself in a {@link BottomSheetLayout}. Like a {@link
- * android.support.v4.app.DialogFragment}, you can show this either in a bottom sheet by using
+ * DialogFragment}, you can show this either in a bottom sheet by using
  * {@link #show(FragmentManager, int)} or attach it to a view with the normal fragment transaction
  * methods.
  * <p>
