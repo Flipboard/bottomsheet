@@ -93,18 +93,13 @@ public class MenuSheetView extends FrameLayout {
 
         // Inflate the appropriate view and set up the absListView
         inflate(context, menuType == GRID ? R.layout.grid_sheet_view : R.layout.list_sheet_view, this);
-        absListView = (AbsListView) findViewById(menuType == GRID ? R.id.grid : R.id.list);
+        absListView = findViewById(menuType == GRID ? R.id.grid : R.id.list);
         if (listener != null) {
-            absListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    listener.onMenuItemClick(adapter.getItem(position).getMenuItem());
-                }
-            });
+            absListView.setOnItemClickListener((parent, view, position, id) -> listener.onMenuItemClick(adapter.getItem(position).getMenuItem()));
         }
 
         // Set up the title
-        titleView = (TextView) findViewById(R.id.title);
+        titleView = findViewById(R.id.title);
         originalListPaddingTop = absListView.getPaddingTop();
         setTitle(title);
 
@@ -378,8 +373,8 @@ public class MenuSheetView extends FrameLayout {
             final TextView label;
 
             NormalViewHolder(View root) {
-                icon = (ImageView) root.findViewById(R.id.icon);
-                label = (TextView) root.findViewById(R.id.label);
+                icon = root.findViewById(R.id.icon);
+                label = root.findViewById(R.id.label);
             }
 
             public void bindView(SheetMenuItem item) {

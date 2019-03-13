@@ -175,13 +175,13 @@ public class ImagePickerSheetView extends FrameLayout {
     protected final int originalGridPaddingTop;
 
     // Values provided by the builder
-    protected int maxItems = 25;
+    protected int maxItems;
     protected ImageProvider imageProvider;
-    protected boolean showCameraOption = true;
-    protected boolean showPickerOption = true;
-    protected Drawable cameraDrawable = null;
-    protected Drawable pickerDrawable = null;
-    protected @LayoutRes int tileLayout = R.layout.sheet_image_grid_item;
+    protected boolean showCameraOption;
+    protected boolean showPickerOption;
+    protected Drawable cameraDrawable;
+    protected Drawable pickerDrawable;
+    protected @LayoutRes int tileLayout;
     protected String title;
     private int columnWidthDp = 100;
 
@@ -192,7 +192,7 @@ public class ImagePickerSheetView extends FrameLayout {
         inflate(getContext(), R.layout.grid_sheet_view, this);
 
         // Set up the grid
-        tileGrid = (GridView) findViewById(R.id.grid);
+        tileGrid = findViewById(R.id.grid);
         spacing = getResources().getDimensionPixelSize(R.dimen.bottomsheet_image_tile_spacing);
         tileGrid.setDrawSelectorOnTop(true);
         tileGrid.setVerticalSpacing(spacing);
@@ -200,18 +200,13 @@ public class ImagePickerSheetView extends FrameLayout {
         tileGrid.setPadding(spacing, 0, spacing, 0);
 
         // Set up the title
-        titleView = (TextView) findViewById(R.id.title);
+        titleView = findViewById(R.id.title);
         originalGridPaddingTop = tileGrid.getPaddingTop();
         setTitle(builder.title);
 
         // Hook up the remaining builder fields
         if (builder.onTileSelectedListener != null) {
-            tileGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(@NonNull AdapterView<?> parent, @NonNull View view, int position, long id) {
-                    builder.onTileSelectedListener.onTileSelected(adapter.getItem(position));
-                }
-            });
+            tileGrid.setOnItemClickListener((parent, view, position, id) -> builder.onTileSelectedListener.onTileSelected(adapter.getItem(position)));
         }
         maxItems = builder.maxItems;
         imageProvider = builder.imageProvider;

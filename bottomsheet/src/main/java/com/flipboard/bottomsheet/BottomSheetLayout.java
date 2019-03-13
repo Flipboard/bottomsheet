@@ -613,12 +613,7 @@ public class BottomSheetLayout extends FrameLayout {
      */
     public void showWithSheetView(final View sheetView, final ViewTransformer viewTransformer) {
         if (state != State.HIDDEN) {
-            Runnable runAfterDismissThis = new Runnable() {
-                @Override
-                public void run() {
-                    showWithSheetView(sheetView, viewTransformer);
-                }
-            };
+            Runnable runAfterDismissThis = () -> showWithSheetView(sheetView, viewTransformer);
             dismissSheet(runAfterDismissThis);
             return;
         }
@@ -654,14 +649,11 @@ public class BottomSheetLayout extends FrameLayout {
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener(this);
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Make sure sheet view is still here when first draw happens.
-                        // In the case of a large lag it could be that the view is dismissed before it is drawn resulting in sheet view being null here.
-                        if (getSheetView() != null) {
-                            peekSheet();
-                        }
+                post(() -> {
+                    // Make sure sheet view is still here when first draw happens.
+                    // In the case of a large lag it could be that the view is dismissed before it is drawn resulting in sheet view being null here.
+                    if (getSheetView() != null) {
+                        peekSheet();
                     }
                 });
                 return true;
@@ -670,26 +662,23 @@ public class BottomSheetLayout extends FrameLayout {
 
         // sheetView should always be anchored to the bottom of the screen
         currentSheetViewHeight = sheetView.getMeasuredHeight();
-        sheetViewOnLayoutChangeListener = new OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View sheetView, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                int newSheetViewHeight = sheetView.getMeasuredHeight();
-                if (state != State.HIDDEN) {
-                    // The sheet can no longer be in the expanded state if it has shrunk
-                    if (newSheetViewHeight < currentSheetViewHeight) {
-                        if (state == State.EXPANDED) {
-                            setState(State.PEEKED);
-                        }
-                        setSheetTranslation(newSheetViewHeight);
-                    } else if (currentSheetViewHeight > 0 && newSheetViewHeight > currentSheetViewHeight && state == State.PEEKED) {
-                        if (newSheetViewHeight == getMaxSheetTranslation()) {
-                            setState(State.EXPANDED);
-                        }
-                        setSheetTranslation(newSheetViewHeight);
+        sheetViewOnLayoutChangeListener = (sheetView1, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            int newSheetViewHeight = sheetView1.getMeasuredHeight();
+            if (state != State.HIDDEN) {
+                // The sheet can no longer be in the expanded state if it has shrunk
+                if (newSheetViewHeight < currentSheetViewHeight) {
+                    if (state == State.EXPANDED) {
+                        setState(State.PEEKED);
                     }
+                    setSheetTranslation(newSheetViewHeight);
+                } else if (currentSheetViewHeight > 0 && newSheetViewHeight > currentSheetViewHeight && state == State.PEEKED) {
+                    if (newSheetViewHeight == getMaxSheetTranslation()) {
+                        setState(State.EXPANDED);
+                    }
+                    setSheetTranslation(newSheetViewHeight);
                 }
-                currentSheetViewHeight = newSheetViewHeight;
             }
+            currentSheetViewHeight = newSheetViewHeight;
         };
         sheetView.addOnLayoutChangeListener(sheetViewOnLayoutChangeListener);
     }

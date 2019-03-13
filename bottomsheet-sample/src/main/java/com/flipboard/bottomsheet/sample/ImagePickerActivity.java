@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -48,17 +47,14 @@ public final class ImagePickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_picker);
-        bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
+        bottomSheetLayout = findViewById(R.id.bottomsheet);
         bottomSheetLayout.setPeekOnDismiss(true);
-        selectedImage = (ImageView) findViewById(R.id.image_picker_selected);
-        findViewById(R.id.image_picker_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkNeedsPermission()) {
-                    requestStoragePermission();
-                } else {
-                    showSheetView();
-                }
+        selectedImage = findViewById(R.id.image_picker_selected);
+        findViewById(R.id.image_picker_button).setOnClickListener(v -> {
+            if (checkNeedsPermission()) {
+                requestStoragePermission();
+            } else {
+                showSheetView();
             }
         });
     }
@@ -100,31 +96,25 @@ public final class ImagePickerActivity extends AppCompatActivity {
                 .setMaxItems(30)
                 .setShowCameraOption(createCameraIntent() != null)
                 .setShowPickerOption(createPickIntent() != null)
-                .setImageProvider(new ImagePickerSheetView.ImageProvider() {
-                    @Override
-                    public void onProvideImage(ImageView imageView, Uri imageUri, int size) {
-                        RequestOptions glideRequestOptions = RequestOptions
-                                .centerCropTransform();
-                        Glide.with(ImagePickerActivity.this)
-                                .load(imageUri)
-                                .apply(glideRequestOptions)
-                                .transition(withCrossFade())
-                                .into(imageView);
-                    }
+                .setImageProvider((imageView, imageUri, size) -> {
+                    RequestOptions glideRequestOptions = RequestOptions
+                            .centerCropTransform();
+                    Glide.with(ImagePickerActivity.this)
+                            .load(imageUri)
+                            .apply(glideRequestOptions)
+                            .transition(withCrossFade())
+                            .into(imageView);
                 })
-                .setOnTileSelectedListener(new ImagePickerSheetView.OnTileSelectedListener() {
-                    @Override
-                    public void onTileSelected(ImagePickerSheetView.ImagePickerTile selectedTile) {
-                        bottomSheetLayout.dismissSheet();
-                        if (selectedTile.isCameraTile()) {
-                            dispatchTakePictureIntent();
-                        } else if (selectedTile.isPickerTile()) {
-                            startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
-                        } else if (selectedTile.isImageTile()) {
-                            showSelectedImage(selectedTile.getImageUri());
-                        } else {
-                            genericError();
-                        }
+                .setOnTileSelectedListener(selectedTile -> {
+                    bottomSheetLayout.dismissSheet();
+                    if (selectedTile.isCameraTile()) {
+                        dispatchTakePictureIntent();
+                    } else if (selectedTile.isPickerTile()) {
+                        startActivityForResult(createPickIntent(), REQUEST_LOAD_IMAGE);
+                    } else if (selectedTile.isImageTile()) {
+                        showSelectedImage(selectedTile.getImageUri());
+                    } else {
+                        genericError();
                     }
                 })
                 .setTitle("Choose an image...")
